@@ -1,0 +1,211 @@
+{{define "base"}}
+<!DOCTYPE html>
+<html lang="{{.Lang}}" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - DailyNews</title>
+    <meta name="description" content="{{.Description}}">
+    <meta name="keywords" content="noticias, news, actualidad, {{.CurrentCategory}}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{.Title}} - DailyNews">
+    <meta property="og:description" content="{{.Description}}">
+    <meta property="og:url" content="{{.URL}}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="{{.Title}} - DailyNews">
+    <meta property="twitter:description" content="{{.Description}}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/newsicon.png?v=2">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/newsicon.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/newsicon.png?v=2">
+    <link rel="apple-touch-icon" href="/images/newsicon.png">
+    
+    <!-- CSS empaquetado (Tailwind incluido) -->
+    <link href="{{.MainCSS}}" rel="stylesheet">
+    
+    <!-- NO CDN: Vue 3 está empaquetado en el JS -->
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="h-full bg-gray-50 dark:bg-gray-950">
+    <div id="app" class="min-h-full">
+        <!-- Header común -->
+        {{template "header" .}}
+        
+        <!-- Filtros -->
+        {{template "filterBar" .}}
+        
+        <!-- Contenido específico de la página -->
+        <main class="container mx-auto px-4 py-6">
+            {{template "content" .}}
+        </main>
+        
+        <!-- Footer común -->
+        {{template "footer" .}}
+        
+        <!-- Loading overlay (oculto por defecto) -->
+        <div id="loading" class="loading-overlay hidden">
+            <div class="loading-content">
+                <div class="loading-spinner mx-auto mb-4"></div>
+                <p class="text-gray-600 dark:text-gray-300">Cargando...</p>
+            </div>
+        </div>
+        
+        <!-- Contenedor de notificaciones -->
+        <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2">
+            <!-- Las notificaciones se insertarán aquí dinámicamente -->
+        </div>
+    </div>
+    
+    <!-- Script principal empaquetado (Vue 3 incluido) -->
+    <script src="{{.MainJS}}"></script>
+    
+    <!-- Script específico de la página (opcional) -->
+    {{/* Comentado hasta crear los archivos específicos */}}
+    
+    <!-- Script para tracking de noticias -->
+    <script>
+    console.log('🔍 DEBUG: Script cargado correctamente');
+    
+    // Esperar a que Vue se cargue desde el archivo principal
+    setTimeout(() => {
+        // Verificar que Vue está disponible DESPUÉS de cargar el JS principal
+        if (typeof Vue !== 'undefined') {
+            console.log('✅ Vue está disponible (después de cargar JS)');
+        } else {
+            console.log('❌ Vue NO está disponible (después de cargar JS)');
+        }
+        
+        // Verificar que el DOM está listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('✅ DOM cargado correctamente (después de cargar JS)');
+                console.log('🔍 Elementos encontrados:', {
+                    app: document.getElementById('app'),
+                    header: document.querySelector('header'),
+                    main: document.querySelector('main'),
+                    footer: document.querySelector('footer')
+                });
+                
+                // LOGS DETALLADOS DEL CONTENIDO
+                const appElement = document.getElementById('app');
+                if (appElement) {
+                    console.log('🔍 DEBUG: Contenido final del elemento #app:');
+                    console.log('  - innerHTML length:', appElement.innerHTML.length);
+                    console.log('  - children count:', appElement.children.length);
+                    console.log('  - innerHTML preview:', appElement.innerHTML.substring(0, 300) + '...');
+                    console.log('  - Elementos hijos:', Array.from(appElement.children).map(child => child.tagName));
+                }
+            });
+        } else {
+            console.log('✅ DOM ya estaba listo (después de cargar JS)');
+            console.log('🔍 Elementos encontrados:', {
+                app: document.getElementById('app'),
+                header: document.querySelector('header'),
+                main: document.querySelector('main'),
+                footer: document.querySelector('footer')
+            });
+            
+            // LOGS DETALLADOS DEL CONTENIDO
+            const appElement = document.getElementById('app');
+            if (appElement) {
+                console.log('🔍 DEBUG: Contenido final del elemento #app:');
+                console.log('  - innerHTML length:', appElement.innerHTML.length);
+                console.log('  - children count:', appElement.children.length);
+                console.log('  - innerHTML preview:', appElement.innerHTML.substring(0, 300) + '...');
+                console.log('  - Elementos hijos:', Array.from(appElement.children).map(child => child.tagName));
+            }
+        }
+    }, 100); // Esperar 100ms para que el JS principal se cargue
+    
+    // Capturar errores globales
+    window.addEventListener('error', function(e) {
+        console.error('❌ Error global detectado:', e.error);
+        console.error('❌ Mensaje:', e.message);
+        console.error('❌ Archivo:', e.filename);
+        console.error('❌ Línea:', e.lineno);
+    });
+    
+    // Capturar errores de recursos
+    window.addEventListener('error', function(e) {
+        if (e.target && e.target.tagName) {
+            console.error('❌ Error cargando recurso:', e.target.src || e.target.href);
+        }
+    }, true);
+    
+    // FUNCIONES GLOBALES NECESARIAS
+    function refreshNews() {
+        console.log('🔄 Función refreshNews llamada');
+        // Esta función será manejada por Vue 3
+        if (window.app && window.app._instance && window.app._instance.proxy) {
+            window.app._instance.proxy.refreshNews();
+        } else {
+            // Fallback: recargar página
+            window.location.reload();
+        }
+    }
+    
+    function toggleDarkMode() {
+        console.log('🌙 Función toggleDarkMode llamada');
+        const html = document.documentElement;
+        const isDark = html.classList.contains('dark');
+        
+        if (isDark) {
+            html.classList.remove('dark');
+            localStorage.setItem('darkMode', 'light');
+        } else {
+            html.classList.add('dark');
+            localStorage.setItem('darkMode', 'dark');
+        }
+    }
+    
+    function toggleMobileMenu() {
+        console.log('📱 Función toggleMobileMenu llamada');
+        const menu = document.getElementById('mobile-menu');
+        if (menu) {
+            menu.classList.toggle('hidden');
+        }
+    }
+    
+    function trackNewsClick(newsId, sourceName, categoryName) {
+        
+        console.log('Noticia clickeada:', { newsId, sourceName, categoryName });
+        
+        
+        fetch('/api/track-news-click', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                newsId: newsId,
+                sourceName: sourceName,
+                categoryName: categoryName,
+                timestamp: new Date().toISOString()
+            })
+        }).catch(error => {
+            console.error('Error tracking news click:', error);
+        });
+    }
+    
+    // Inicializar modo oscuro desde localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedMode = localStorage.getItem('darkMode');
+        if (savedMode === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    });
+    
+    console.log('🔍 DEBUG: Script inicializado');
+    </script>
+</body>
+</html>
+{{end}}

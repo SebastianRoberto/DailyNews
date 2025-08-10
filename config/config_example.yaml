@@ -1,0 +1,151 @@
+database:
+  # Configuración para entorno local
+  # reemplaza lo que necesites
+  news_db:
+    host: "localhost"
+    port: 3306               # Normalmente sera 3306 pero reemplazalo si te hace falta
+    schema: "getnews"
+    user: "root"              # Pon tu usuario Mysql aquí
+    password: ""  # Pon tu contraseña Mysql aquí
+    custom_logger: true
+    ensure: false
+    auto_migrate: false
+
+server:
+  http:
+    mode: "prod"
+    port: 3020               # El puerto en el que quieras que corra la aplicación 
+    timeout: "10s"
+    swagger: false
+
+logger:
+  mode: "prod"
+  detailedLogs: false 
+
+# El apartado de newsCount es para definir la cantidad de noticias que queremos para cada categoria e idioma
+newsCount:
+  default: 10 # Si no se especifica una cantidad de noticias por defecto para las categorías de un idioma y el idioma no tiene un valor por defecto se usa esto.
+
+  es: # Noticias en Español
+    default: 10 # Default para todas las categorías en español si no se especifica una 
+    technology: 7
+    #sports: 8
+    #health: 10
+    #culture: 10
+    #international: 10
+    #entertainment: 10
+    #economy: 10
+    #breaking: 7
+
+  en: # Noticias en Inglés
+    default: 10 # Default para todas las categorías en inglés
+    technology: 7
+    #sports: 12
+    #health: 10
+    #culture: 10
+    #international: 10
+    #entertainment: 10
+    #economy: 10
+    #breaking: 7
+
+  fr: # Noticias en Francés
+    default: 10 # Default para todas las categorías en francés
+    technology: 7
+    #sports: 12
+    #health: 10
+    #culture: 10
+    #international: 10
+    #entertainment: 10
+    #economy: 10
+    #breaking: 7
+
+# Noticias nuevas cada 24h
+cron:
+  # Standard cron format or descriptors like "@daily", "@every 1h30m"
+  logger: true
+  expr: "@every 24h" # Run once a day
+
+
+# Límite de noticias por fuente en cada combinación categoría+idioma
+# Evita que una sola fuente monopolice las noticias de una categoría
+maxPerSource:
+  default: 7          # Máximo por defecto si no se especifica
+  
+  es: # Límites para español
+    default: 5        # Default para todas las categorías en español
+    technology: 7     # Máximo 7 noticias por fuente en tecnología
+    sports: 7         # Máximo 7 noticias por fuente en deportes
+    #health: 6
+    #culture: 6
+    #international: 6
+    #entertainment: 6
+    #economy: 5
+    #breaking: 4
+    
+  en: # Límites para inglés
+    default: 20       # Default para todas las categorías en inglés
+    technology: 10    # Máximo 10 noticias de cada fuente en tecnología
+    sports: 9         # Máximo 9 noticias de cada fuente en deportes
+    health: 15
+    culture: 12
+    international: 15
+    entertainment: 7
+    economy: 10
+    breaking: 6
+    
+  fr: # Límites para francés
+    default: 8        # Default para todas las categorías en francés
+    #technology: 7
+    #sports: 7
+    #health: 6
+    #culture: 6
+    #international: 6
+    #entertainment: 6
+    #economy: 5
+    #breaking: 4
+
+
+# Filtros de antigüedad por categoría e idioma
+maxDays:
+  default: 7         # Máxima antigüedad por defecto (días)
+  
+  es: # Filtros para español
+    default: 30       # Default para todas las categorías en español
+    technology: 20    # 20 días para tecnología (evoluciona más lento)
+    #sports: 14
+    #health: 21
+    #culture: 30
+    #international: 21
+    #entertainment: 21
+    #economy: 21
+    #breaking: 7      # Último momento
+    
+  en: # Filtros para inglés
+    default: 30       # Default para todas las categorías en inglés
+    technology: 30
+    #sports: 14
+    #health: 21
+    #culture: 30
+    #international: 21
+    #entertainment: 21
+    #economy: 21
+    #breaking: 7
+    
+  fr: # Filtros para francés
+    default: 30       # Default para todas las categorías en francés
+    #technology: 20
+    #sports: 14
+    #health: 21
+    #culture: 30
+    #international: 21
+    #entertainment: 21
+    #economy: 21
+    #breaking: 7
+
+# Filtros adicionales para las noticias
+filters:
+  minTitle: 60        # Mínima longitud de título
+  maxTitle: 350       # Máxima longitud de título
+  maxDaysForNewsWithFewSources: 9 # Máxima antigüedad de noticia en días para categorías que tienen 3 o menos fuentes
+  aspectTolerance: 0.3 # Lo que se permite que varie una imagen del aspecto ideal
+  targetAspect: 1.7777 # Relación de aspecto objetivo (16:9)

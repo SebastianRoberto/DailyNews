@@ -1,0 +1,1817 @@
+{{define "header"}}
+<!-- Botón flotante de opciones avanzadas -->
+<div class="fixed bottom-6 right-6 z-50">
+    <button 
+        onclick="toggleAdvancedOptions()"
+        class="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center space-x-2"
+        title="Configuración"
+    >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        <span id="config-label" class="font-medium">Configuración</span>
+    </button>
+</div>
+
+<!-- Desplegable de opciones avanzadas -->
+<div id="advanced-options-dropdown" class="fixed bottom-20 right-6 z-40 w-[26rem] bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 opacity-0 scale-95 transform transition-all duration-300 ease-out pointer-events-none">
+    <div class="p-6">
+        <!-- Header del desplegable -->
+        <div class="flex items-center justify-between mb-6">
+            <h3 id="i18n-add-source-title" class="text-lg font-semibold text-gray-900 dark:text-white">Añadir fuente RSS</h3>
+            <button onclick="toggleAdvancedOptions()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Formulario para agregar nueva fuente -->
+        <form id="add-source-form" class="space-y-4">
+            <!-- Nombre de la fuente -->
+            <div>
+                <label id="i18n-source-name-label" for="source-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Nombre de la Fuente *
+                </label>
+                                    <input 
+                        type="text" 
+                        id="source-name" 
+                        name="sourceName"
+                        required
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    placeholder="Ej: ESPN, Reuters, CNN.."
+                    >
+            </div>
+
+            <!-- URL del RSS -->
+            <div>
+                <label id="i18n-rss-url-label" for="rss-url" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    URL del Feed RSS *
+                </label>
+                                    <input 
+                        type="url" 
+                        id="rss-url" 
+                        name="rssUrl"
+                        required
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        placeholder="https://feeds.feedburner.com/techcrunch"
+                    >
+            </div>
+
+            <!-- Categoría e Idioma en línea -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label id="i18n-category-label" for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Categoría *
+                    </label>
+                    <select 
+                        id="category" 
+                        name="category"
+                        required
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option id="i18n-category-placeholder" value="">Seleccionar</option>
+                        <option value="technology">Tecnología</option>
+                        <option value="sports">Deportes</option>
+                        <option value="entertainment">Entretenimiento</option>
+                        <option value="economy">Economía</option>
+                        <option value="health">Salud</option>
+                        <option value="international">Internacional</option>
+                        <option value="culture">Cultura</option>
+                        <option value="breaking">Destacado</option>
+                    </select>
+                </div>
+                <div>
+                    <label id="i18n-language-label" for="language" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Idioma *
+                    </label>
+                    <select 
+                        id="language" 
+                        name="language"
+                        required
+                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option id="i18n-language-placeholder" value="">Seleccionar</option>
+                        <option value="es">Español</option>
+                        <option value="en">English</option>
+                        <option value="fr">Français</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Imagen de Fallback -->
+            <div class="mb-4">
+                <label id="i18n-fallback-image-label" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Imagen de Fallback</label>
+                <div class="text-xs mb-2">
+                    <span id="i18n-fallback-note" class="text-red-600 dark:text-red-400">⚠️ Muchas fuentes RSS no proporcionan imágenes. Selecciona una imagen de respaldo para las noticias de esta categoría e idioma, recomiendo darle a probar para verificar si la fuente requiere una imagen de fallback 👍.</span>
+                    <br><span id="i18n-ideal-size-label" class="font-bold text-gray-900 dark:text-white">Tamaño ideal:</span> <span id="i18n-ideal-size" class="text-gray-700 dark:text-gray-300">800x600 píxeles o similar (16:9) para mejor visualización en las cards(Se redimensionan igualmente).</span>
+                </div>
+                           <div class="file-input-container">
+               <input 
+                   type="file" 
+                   id="fallback-image" 
+                   accept="image/*"
+                   class="file-input"
+               >
+                <label for="fallback-image" class="file-input-label">
+                    <span id="i18n-file-label" class="file-input-text">Archivo:</span>
+                    <span class="file-input-filename" id="file-name">Selecciona un archivo</span>
+               </label>
+           </div>
+                <div id="image-preview" class="mt-2 hidden">
+                    <img id="preview-img" class="w-32 h-20 object-cover rounded border">
+                    <div class="text-xs text-gray-500 mt-1">Vista previa de la imagen seleccionada</div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex space-x-3 pt-2">
+                <button 
+                    type="submit"
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                    <span id="i18n-add-source-btn">Agregar Fuente</span>
+                </button>
+                <button 
+                    type="button"
+                    id="test-button"
+                    onclick="testRSSUrl()"
+                    class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-white px-4 py-2 text-sm rounded-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <span id="test-button-text">Probar</span>
+                    <span id="test-button-loading" class="hidden">
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Probando...
+                    </span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Resultado de la prueba -->
+        <div id="test-result" class="mt-4 hidden">
+            <div class="p-3 rounded-md text-sm">
+                <div id="test-success" class="hidden bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200">
+                    <div class="flex">
+                        <svg class="w-4 h-4 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span id="success-message">URL válida</span>
+                    </div>
+                </div>
+                <div id="test-error" class="hidden bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200">
+                    <div class="flex">
+                        <svg class="w-4 h-4 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span id="error-message">Error al probar URL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de fuentes agregadas -->
+        <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <!-- Título centralizado como subtítulo -->
+            <h4 id="i18n-my-sources" class="text-sm font-medium text-gray-900 dark:text-white text-center mb-4">Mis Fuentes RSS</h4>
+            
+            <!-- Controles de filtrado -->
+            <div class="flex items-center space-x-2 mb-3">
+                <span id="i18n-filter-by" class="text-xs text-gray-700 dark:text-gray-300">Filtrar por:</span>
+                
+                <!-- Dropdown Categoría -->
+                <select id="category-filter" class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded border border-gray-300 dark:border-gray-600">
+                    <option id="i18n-category-filter-ph" value="">Categoría</option>
+                    <option value="technology">Tecnología</option>
+                    <option value="economy">Economía</option>
+                    <option value="sports">Deportes</option>
+                    <option value="entertainment">Entretenimiento</option>
+                    <option value="health">Salud</option>
+                    <option value="international">Internacional</option>
+                    <option value="culture">Cultura</option>
+                    <option value="breaking">Destacado</option>
+                </select>
+                
+                <!-- Dropdown Idioma -->
+                <select id="language-filter" class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded border border-gray-300 dark:border-gray-600">
+                    <option id="i18n-language-filter-ph" value="">Idioma</option>
+                    <option value="Español">Español</option>
+                    <option value="English">English</option>
+                </select>
+                
+                <!-- Icono limpiar filtros (reciclaje azul) -->
+                <button 
+                    onclick="clearFilters()" 
+                    class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 p-1 transition-all duration-200 ease-in-out"
+                    title="Limpiar filtros"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
+                
+                <!-- Icono aplicar filtros (check verde) -->
+                <button 
+                    onclick="applyFilters()" 
+                    class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 p-1 transition-all duration-200 ease-in-out"
+                    title="Aplicar filtros"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="sources-list" class="space-y-2 max-h-48 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded p-2 custom-scrollbar">
+                <!-- Las fuentes se cargarán dinámicamente aquí -->
+                <div class="text-center text-gray-500 dark:text-gray-400 py-4">
+                    <svg class="w-8 h-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                    </svg>
+                    <p id="i18n-no-user-sources" class="text-xs">No hay fuentes agregadas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== I18N básico =====
+function getCurrentLang() {
+  const p = new URLSearchParams(window.location.search);
+  return p.get('lang') || 'es';
+}
+
+const I18N = {
+  es: {
+    config: 'Configuración',
+    search_placeholder: 'Buscar noticias...',
+    language: 'Idioma',
+    filters: 'Filtros',
+    refresh: 'Actualizar',
+    change_theme: 'Cambiar tema',
+    latest_news: 'Últimas Noticias',
+    keep_informed: 'Mantente informado con las noticias más recientes de múltiples fuentes',
+    featured_categories: 'Categorías Destacadas',
+    recent_news: 'Noticias Recientes',
+    total_news: 'Total Noticias',
+    categories: 'Categorías',
+    languages: 'Idiomas',
+    rss_sources: 'Fuentes RSS',
+    tagline: 'Tu portal de noticias',
+    nav_home: 'Inicio',
+    nav_technology: 'Tecnología',
+    nav_economy: 'Economía',
+    nav_sports: 'Deportes',
+    nav_entertainment: 'Entretenimiento',
+    nav_health: 'Salud',
+    nav_international: 'Internacional',
+    nav_culture: 'Cultura',
+    nav_breaking: 'Destacado',
+    no_news: 'No hay noticias disponibles',
+    try_refresh_or_filters: 'Intenta actualizar las noticias o cambiar los filtros(o agrega nuevas fuentes en configuración).',
+    update_news: 'Actualizar Noticias',
+    updating: 'Actualizando...',
+    sources_label: 'Fuentes:',
+    period: 'Período:',
+    all_periods: 'Todos los períodos',
+    today: 'Hoy',
+    yesterday: 'Ayer',
+    this_week: 'Esta semana',
+    custom_range: 'Rango personalizado',
+    apply_filters: 'Aplicar filtros',
+    clear_filters: 'Limpiar filtros',
+    results_for: 'Resultados para:',
+    clear_search: 'Limpiar búsqueda',
+    from: 'Desde:',
+    to: 'Hasta:',
+    test_title: 'Prueba de fuente',
+    examples: 'Ejemplos de noticias:',
+    pattern_detected: 'Patrón detectado',
+    type: 'Tipo',
+    requires_fallback_yes: 'Requiere imagen de fallback: Sí',
+    requires_fallback_no: 'Requiere imagen de fallback: No',
+    enter_url: 'Por favor ingresa una URL',
+    test_error: 'Error al probar la URL',
+    test_conn_error: 'Error de conexión al probar la URL',
+    duplicate_title: 'Fuente duplicada',
+    duplicate_msg: 'Esta fuente ya existe para esa categoría e idioma.',
+    add_success_title: 'Fuente agregada',
+    add_success_msg: 'La fuente RSS se añadió correctamente.',
+    add_error_title: 'Error al agregar',
+    add_error_msg: 'No se pudo agregar la fuente',
+    add_conn_error: 'Error al agregar fuente RSS',
+    delete_confirm_title: 'Eliminar fuente',
+    delete_confirm_msg: '¿Estás seguro de que quieres eliminar esta fuente?',
+    delete_btn: 'Eliminar',
+    cancel_btn: 'Cancelar',
+    delete_success_title: 'Fuente eliminada',
+    delete_success_msg: 'La fuente fue eliminada correctamente.',
+    delete_error_title: 'Error al eliminar',
+    delete_conn_error: 'No se pudo eliminar la fuente'
+    ,add_source_title: 'Añadir fuente RSS'
+    ,source_name_label: 'Nombre de la Fuente *'
+    ,source_name_ph: 'Ej: ESPN, Reuters, CNN..'
+    ,rss_url_label: 'URL del Feed RSS *'
+    ,category_label: 'Categoría *'
+    ,language_label: 'Idioma *'
+    ,fallback_image_label: 'Imagen de Fallback'
+    ,fallback_note: '⚠️ Muchas fuentes RSS no proporcionan imágenes. Selecciona una imagen de respaldo para las noticias de esta categoría e idioma, recomiendo darle a probar para verificar si la fuente requiere una imagen de fallback 👍.'
+    ,ideal_size_label: 'Tamaño ideal:'
+    ,ideal_size_text: '800x600 píxeles o similar (16:9) para mejor visualización en las cards(No es obligatorio).'
+    ,file_label: 'Archivo:'
+    ,add_source_btn: 'Agregar Fuente'
+    ,test_btn: 'Probar'
+    ,my_sources_title: 'Mis Fuentes RSS'
+    ,filter_by: 'Filtrar por:'
+    ,no_user_sources: 'No hay fuentes agregadas'
+    ,category_ph: 'Seleccionar'
+    ,language_ph: 'Seleccionar'
+    ,footer_tagline: 'Tu fuente confiable de noticias actualizadas. Mantente informado con las últimas noticias de tecnología, deportes, cultura, entretenimiento y economía.'
+    ,footer_categories: 'Categorías'
+    ,footer_information: 'Información'
+    ,footer_search: 'Buscar'
+    ,footer_system_status: 'Estado del Sistema'
+    ,footer_last_refresh: 'Último refresh:'
+    ,footer_languages: 'Idiomas:'
+    ,footer_news_available: 'noticias disponibles'
+    ,confirm_changes: 'Confirmar cambios'
+    ,cancel_changes: 'Cancelar cambios'
+    ,image_selected: 'Imagen seleccionada'
+    ,confirm_change: 'Confirma el cambio'
+    ,name_updated: 'Nombre actualizado'
+    ,image_updated: 'Imagen actualizada'
+    ,name_and_image_updated: 'Nombre e imagen actualizados'
+    ,changes_cancelled: 'Cambios cancelados'
+    ,changes_discarded: 'Cambios descartados'
+    ,update_error: 'Error de actualización'
+    ,update_error_msg: 'Error al actualizar'
+    ,delete_source: 'Eliminar fuente'
+  },
+  en: {
+    config: 'Settings',
+    search_placeholder: 'Search news...',
+    language: 'Language',
+    filters: 'Filters',
+    refresh: 'Refresh',
+    change_theme: 'Toggle theme',
+    latest_news: 'Latest News',
+    keep_informed: 'Stay informed with the most recent news from multiple sources',
+    featured_categories: 'Featured Categories',
+    recent_news: 'Recent News',
+    total_news: 'Total News',
+    categories: 'Categories',
+    languages: 'Languages',
+    rss_sources: 'RSS Sources',
+    tagline: 'Your news portal',
+    nav_home: 'Home',
+    nav_technology: 'Technology',
+    nav_economy: 'Economy',
+    nav_sports: 'Sports',
+    nav_entertainment: 'Entertainment',
+    nav_health: 'Health',
+    nav_international: 'International',
+    nav_culture: 'Culture',
+    nav_breaking: 'Breaking News',
+    no_news: 'No news available',
+    try_refresh_or_filters: 'Try refreshing the news or adjusting the filters (or add new sources in settings).',
+    update_news: 'Refresh News',
+    updating: 'Refreshing...',
+    sources_label: 'Sources:',
+    period: 'Period:',
+    all_periods: 'All periods',
+    today: 'Today',
+    yesterday: 'Yesterday',
+    this_week: 'This week',
+    custom_range: 'Custom range',
+    apply_filters: 'Apply filters',
+    clear_filters: 'Clear filters',
+    results_for: 'Results for:',
+    clear_search: 'Clear search',
+    from: 'From:',
+    to: 'To:',
+    test_title: 'Source test',
+    examples: 'Sample articles:',
+    pattern_detected: 'Detected pattern',
+    type: 'Type',
+    requires_fallback_yes: 'Requires fallback image: Yes',
+    requires_fallback_no: 'Requires fallback image: No',
+    enter_url: 'Please enter a URL',
+    test_error: 'Error testing the URL',
+    test_conn_error: 'Connection error while testing the URL',
+    duplicate_title: 'Duplicate source',
+    duplicate_msg: 'This source already exists for that category and language.',
+    add_success_title: 'Source added',
+    add_success_msg: 'RSS source added successfully.',
+    add_error_title: 'Add error',
+    add_error_msg: 'Could not add the source',
+    add_conn_error: 'Error adding RSS source',
+    delete_confirm_title: 'Delete source',
+    delete_confirm_msg: 'Are you sure you want to delete this source?',
+    delete_btn: 'Delete',
+    cancel_btn: 'Cancel',
+    delete_success_title: 'Source deleted',
+    delete_success_msg: 'The source was deleted successfully.',
+    delete_error_title: 'Delete error',
+    delete_conn_error: 'Could not delete the source'
+    ,add_source_title: 'Add RSS Source'
+    ,source_name_label: 'Source Name *'
+    ,source_name_ph: 'e.g., ESPN, Reuters, CNN..'
+    ,rss_url_label: 'RSS Feed URL *'
+    ,category_label: 'Category *'
+    ,language_label: 'Language *'
+    ,fallback_image_label: 'Fallback Image'
+    ,fallback_note: '⚠️ Many RSS feeds do not include images. Select a fallback image for this category and language; it’s recommended to test to verify if a fallback is required.'
+    ,ideal_size_label: 'Ideal size:'
+    ,ideal_size_text: '800x600 pixels or similar (16:9) for best card display.'
+    ,file_label: 'File:'
+    ,add_source_btn: 'Add Source'
+    ,test_btn: 'Test'
+    ,my_sources_title: 'My RSS Sources'
+    ,filter_by: 'Filter by:'
+    ,no_user_sources: 'No sources added'
+    ,category_ph: 'Select'
+    ,language_ph: 'Select'
+    ,footer_tagline: 'Your trusted source for up-to-date news. Stay informed with the latest in technology, sports, culture, entertainment and economy.'
+    ,footer_categories: 'Categories'
+    ,footer_information: 'Information'
+    ,footer_search: 'Search'
+    ,footer_system_status: 'System Status'
+    ,footer_last_refresh: 'Last refresh:'
+    ,footer_languages: 'Languages:'
+    ,footer_news_available: 'news available'
+    ,confirm_changes: 'Confirm changes'
+    ,cancel_changes: 'Cancel changes'
+    ,image_selected: 'Image selected'
+    ,confirm_change: 'Confirm the change'
+    ,name_updated: 'Name updated'
+    ,image_updated: 'Image updated'
+    ,name_and_image_updated: 'Name and image updated'
+    ,changes_cancelled: 'Changes cancelled'
+    ,changes_discarded: 'Changes discarded'
+    ,update_error: 'Update error'
+    ,update_error_msg: 'Error updating'
+    ,delete_source: 'Delete source'
+  },
+  fr: {
+    config: 'Configuration',
+    search_placeholder: 'Rechercher des actualités...',
+    language: 'Langue',
+    filters: 'Filtres',
+    refresh: 'Actualiser',
+    change_theme: 'Changer le thème',
+    latest_news: 'Dernières nouvelles',
+    keep_informed: 'Restez informé avec les actualités les plus récentes de multiples sources',
+    featured_categories: 'Catégories en vedette',
+    recent_news: 'Actualités récentes',
+    total_news: 'Nouvelles totales',
+    categories: 'Catégories',
+    languages: 'Langues',
+    rss_sources: 'Sources RSS',
+    tagline: 'Votre portail d’actualités',
+    nav_home: 'Accueil',
+    nav_technology: 'Technologie',
+    nav_economy: 'Économie',
+    nav_sports: 'Sports',
+    nav_entertainment: 'Divertissement',
+    nav_health: 'Santé',
+    nav_international: 'International',
+    nav_culture: 'Culture',
+    nav_breaking: 'À la une',
+    no_news: 'Aucune actualité disponible',
+    try_refresh_or_filters: 'Essayez d’actualiser les actualités ou d’ajuster les filtres (ou ajoutez de nouvelles sources dans la configuration).',
+    update_news: 'Actualiser les actualités',
+    updating: 'Actualisation...',
+    sources_label: 'Sources :',
+    period: 'Période :',
+    all_periods: 'Toutes les périodes',
+    today: 'Aujourd’hui',
+    yesterday: 'Hier',
+    this_week: 'Cette semaine',
+    custom_range: 'Plage personnalisée',
+    apply_filters: 'Appliquer les filtres',
+    clear_filters: 'Effacer les filtres',
+    results_for: 'Résultats pour :',
+    clear_search: 'Effacer la recherche',
+    from: 'De :',
+    to: 'À :',
+    test_title: 'Test de la source',
+    examples: 'Exemples d’articles :',
+    pattern_detected: 'Modèle détecté',
+    type: 'Type',
+    requires_fallback_yes: 'Nécessite une image de secours : Oui',
+    requires_fallback_no: 'Nécessite une image de secours : Non',
+    enter_url: 'Veuillez saisir une URL',
+    test_error: 'Erreur lors du test de l’URL',
+    test_conn_error: 'Erreur de connexion lors du test de l’URL',
+    duplicate_title: 'Source dupliquée',
+    duplicate_msg: 'Cette source existe déjà pour cette catégorie et cette langue.',
+    add_success_title: 'Source ajoutée',
+    add_success_msg: 'Source RSS ajoutée avec succès.',
+    add_error_title: 'Erreur d’ajout',
+    add_error_msg: 'Impossible d’ajouter la source',
+    add_conn_error: 'Erreur lors de l’ajout de la source RSS',
+    delete_confirm_title: 'Supprimer la source',
+    delete_confirm_msg: 'Êtes-vous sûr de vouloir supprimer cette source ?',
+    delete_btn: 'Supprimer',
+    cancel_btn: 'Annuler',
+    delete_success_title: 'Source supprimée',
+    delete_success_msg: 'La source a été supprimée avec succès.',
+    delete_error_title: 'Erreur de suppression',
+    delete_conn_error: 'Impossible de supprimer la source'
+    ,add_source_title: 'Ajouter une source RSS'
+    ,source_name_label: 'Nom de la source *'
+    ,source_name_ph: 'ex. : ESPN, Reuters, CNN..'
+    ,rss_url_label: 'URL du flux RSS *'
+    ,category_label: 'Catégorie *'
+    ,language_label: 'Langue *'
+    ,fallback_image_label: 'Image de secours'
+    ,fallback_note: '⚠️ De nombreux flux RSS ne fournissent pas d’images. Sélectionnez une image de secours pour cette catégorie et cette langue; il est recommandé de tester pour vérifier si une image de secours est nécessaire.'
+    ,ideal_size_label: 'Taille idéale :'
+    ,ideal_size_text: '800x600 pixels ou similaire (16:9) pour un meilleur affichage.'
+    ,file_label: 'Fichier :'
+    ,add_source_btn: 'Ajouter la source'
+    ,test_btn: 'Tester'
+    ,my_sources_title: 'Mes sources RSS'
+    ,filter_by: 'Filtrer par :'
+    ,no_user_sources: 'Aucune source ajoutée'
+    ,category_ph: 'Sélectionner'
+    ,language_ph: 'Sélectionner'
+    ,footer_tagline: 'Votre source fiable d’actualités. Restez informé des dernières nouvelles en technologie, sport, culture, divertissement et économie.'
+    ,footer_categories: 'CATÉGORIES'
+    ,footer_information: 'INFORMATION'
+    ,footer_search: 'Rechercher'
+    ,footer_system_status: 'État du système'
+    ,footer_last_refresh: 'Dernière mise à jour :'
+    ,footer_languages: 'Langues :'
+    ,footer_news_available: 'nouvelles disponibles'
+    ,confirm_changes: 'Confirmer les changements'
+    ,cancel_changes: 'Annuler les changements'
+    ,image_selected: 'Image sélectionnée'
+    ,confirm_change: 'Confirmez le changement'
+    ,name_updated: 'Nom mis à jour'
+    ,image_updated: 'Image mise à jour'
+    ,name_and_image_updated: 'Nom et image mis à jour'
+    ,changes_cancelled: 'Changements annulés'
+    ,changes_discarded: 'Changements rejetés'
+    ,update_error: 'Erreur de mise à jour'
+    ,update_error_msg: 'Erreur lors de la mise à jour'
+    ,delete_source: 'Supprimer la source'
+  }
+};
+
+function t(key) { 
+  const lang = getCurrentLang();
+  return (I18N[lang] && I18N[lang][key]) || (I18N.es[key] || key);
+}
+
+function applyI18n() {
+  const configLabel = document.getElementById('config-label');
+  if (configLabel) configLabel.textContent = t('config');
+
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) searchInput.placeholder = t('search_placeholder');
+
+  const langLabel = document.querySelector('label[for="language-select"]');
+  if (langLabel) langLabel.textContent = t('language') + ':';
+
+  const filtersBtn = document.getElementById('advanced-filters-btn');
+  if (filtersBtn) {
+    const svg = filtersBtn.querySelector('svg');
+    filtersBtn.innerHTML = (svg ? svg.outerHTML : '') + ' ' + t('filters');
+  }
+
+  const refreshBtn = document.querySelector('#advanced-filters-btn') ? document.querySelector('#advanced-filters-btn').parentElement.querySelector('button[onclick="refreshNews()"]') : null;
+  const refreshBtns = document.querySelectorAll('button[onclick="refreshNews()"]');
+  refreshBtns.forEach(btn => {
+    const svg = btn.querySelector('svg');
+    btn.innerHTML = (svg ? svg.outerHTML : '') + ' ' + t('refresh');
+    btn.title = t('refresh');
+  });
+
+  const darkTextEls = document.querySelectorAll('.dark-mode-text');
+  darkTextEls.forEach(el => el.textContent = t('change_theme'));
+
+  // Tagline bajo el logo
+  const tagline = document.getElementById('i18n-tagline');
+  if (tagline) tagline.textContent = t('tagline');
+
+  // Navegación principal (desktop y móvil)
+  const navMap = [
+    ['.i18n-nav-home','nav_home'],
+    ['.i18n-nav-technology','nav_technology'],
+    ['.i18n-nav-economy','nav_economy'],
+    ['.i18n-nav-sports','nav_sports'],
+    ['.i18n-nav-entertainment','nav_entertainment'],
+    ['.i18n-nav-health','nav_health'],
+    ['.i18n-nav-international','nav_international'],
+    ['.i18n-nav-culture','nav_culture'],
+    ['.i18n-nav-breaking','nav_breaking'],
+  ];
+  navMap.forEach(([selector, key]) => {
+    document.querySelectorAll(selector).forEach(el => el.textContent = t(key));
+  });
+
+  // Advanced options panel (Añadir fuente RSS)
+  const map = [
+    ['i18n-add-source-title','add_source_title'],
+    ['i18n-source-name-label','source_name_label'],
+    ['i18n-rss-url-label','rss_url_label'],
+    ['i18n-category-label','category_label'],
+    ['i18n-language-label','language_label'],
+    ['i18n-fallback-image-label','fallback_image_label'],
+    ['i18n-fallback-note','fallback_note'],
+    ['i18n-ideal-size-label','ideal_size_label'],
+    ['i18n-ideal-size','ideal_size_text'],
+    ['i18n-file-label','file_label'],
+    ['i18n-add-source-btn','add_source_btn'],
+    ['test-button-text','test_btn'],
+    ['i18n-my-sources','my_sources_title'],
+    ['i18n-filter-by','filter_by'],
+    ['i18n-no-user-sources','no_user_sources']
+  ];
+  map.forEach(([id,key]) => { const el = document.getElementById(id); if (el) el.textContent = t(key); });
+
+  const phMap = [
+    ['source-name','source_name_ph'],
+    ['category','category_ph', 'option'],
+    ['language','language_ph', 'option']
+  ];
+  phMap.forEach(([id,key,kind]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (kind === 'option') {
+      const opt = el.querySelector('option[value=""]');
+      if (opt) opt.textContent = t(key);
+    } else {
+      el.placeholder = t(key);
+    }
+  });
+
+  // Filtros en Mis Fuentes (placeholders de select)
+  const catPh = document.getElementById('i18n-category-filter-ph');
+  if (catPh) catPh.textContent = t('category_ph');
+  const langPh = document.getElementById('i18n-language-filter-ph');
+  if (langPh) langPh.textContent = t('language_ph');
+
+  // ===== Footer i18n =====
+  const footerTagline = document.getElementById('footer-tagline');
+  if (footerTagline) footerTagline.textContent = t('footer_tagline');
+  const footerCatTitle = document.getElementById('footer-categories-title');
+  if (footerCatTitle) footerCatTitle.textContent = t('footer_categories');
+  const footerInfoTitle = document.getElementById('footer-information-title');
+  if (footerInfoTitle) footerInfoTitle.textContent = t('footer_information');
+  const footerSearch = document.getElementById('footer-search-link');
+  if (footerSearch) footerSearch.textContent = t('footer_search');
+  const footerSystem = document.getElementById('footer-system-status-link');
+  if (footerSystem) footerSystem.textContent = t('footer_system_status');
+  const lastRefresh = document.getElementById('footer-last-refresh-label');
+  if (lastRefresh) lastRefresh.textContent = t('footer_last_refresh');
+  const languagesLabel = document.getElementById('footer-languages-label');
+  if (languagesLabel) languagesLabel.textContent = t('footer_languages');
+  const newsAvailableLabel = document.getElementById('footer-news-available-label');
+  if (newsAvailableLabel) newsAvailableLabel.textContent = t('footer_news_available');
+}
+
+document.addEventListener('DOMContentLoaded', applyI18n);
+
+// Función para alternar el desplegable de opciones avanzadas
+function toggleAdvancedOptions() {
+    const dropdown = document.getElementById('advanced-options-dropdown');
+    const isVisible = !dropdown.classList.contains('opacity-0');
+    
+    if (isVisible) {
+        // Ocultar
+        dropdown.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        dropdown.classList.remove('opacity-100', 'scale-100');
+    } else {
+        // Mostrar
+        dropdown.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+        dropdown.classList.add('opacity-100', 'scale-100');
+        loadUserSources(); // Cargar fuentes al abrir
+    }
+}
+
+// Cerrar desplegable al hacer clic fuera
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('advanced-options-dropdown');
+    const button = event.target.closest('button[onclick="toggleAdvancedOptions()"]');
+    const darkModeButton = event.target.closest('button[onclick="toggleDarkMode()"]');
+    
+    // No cerrar si se hace clic en el botón de cambiar tema
+    if (!dropdown.contains(event.target) && !button && !darkModeButton) {
+        dropdown.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        dropdown.classList.remove('opacity-100', 'scale-100');
+    }
+});
+
+// Función para probar URL RSS
+async function testRSSUrl() {
+    const url = document.getElementById('rss-url').value;
+    const testButton = document.getElementById('test-button');
+    const buttonText = document.getElementById('test-button-text');
+    const buttonLoading = document.getElementById('test-button-loading');
+    
+    if (!url) {
+        showToast('Por favor ingresa una URL', 'error');
+        return;
+    }
+
+    // Mostrar estado de carga
+    testButton.disabled = true;
+    buttonText.classList.add('hidden');
+    buttonLoading.classList.remove('hidden');
+
+    try {
+        const response = await fetch('/api/sources/test', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url: url })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            let message = `URL válida. Se encontraron ${result.valid_items} noticias de prueba.`;
+            if (result.sample_titles && result.sample_titles.length > 0) {
+                message += `\n\n${t('examples')}`;
+                result.sample_titles.slice(0, 2).forEach((title, index) => { // Limitar a 2 ejemplos
+                    message += `\n${index + 1}. ${title}`;
+                });
+            }
+            message += `\n\n${t('pattern_detected')}: ${result.detected_pattern}`;
+            message += `\n${t('type')}: ${result.pattern_type}`;
+            // Indicador claro de si requiere fallback
+            const requiereFallback = String(result.pattern_type || '').toLowerCase().includes('sin imagen');
+            if (requiereFallback) {
+                message += `\n\n${t('requires_fallback_yes')}`;
+            } else {
+                message += `\n\n${t('requires_fallback_no')}`;
+            }
+            await showToast({ title: t('test_title'), message, type: 'success', duration: 5200 });
+        } else {
+            showToast(result.error || t('test_error'), 'error');
+        }
+    } catch (error) {
+        showToast(t('test_conn_error'), 'error');
+    } finally {
+        // Restaurar estado del botón
+        testButton.disabled = false;
+        buttonLoading.classList.add('hidden');
+        buttonText.classList.remove('hidden');
+    }
+}
+
+// Función para mostrar resultado de prueba
+function showTestResult(type, message) {
+    const resultDiv = document.getElementById('test-result');
+    const successDiv = document.getElementById('test-success');
+    const errorDiv = document.getElementById('test-error');
+    const successMessage = document.getElementById('success-message');
+    const errorMessage = document.getElementById('error-message');
+
+    resultDiv.classList.remove('hidden');
+    
+    if (type === 'success') {
+        successDiv.classList.remove('hidden');
+        errorDiv.classList.add('hidden');
+        successMessage.textContent = message;
+    } else {
+        errorDiv.classList.remove('hidden');
+        successDiv.classList.add('hidden');
+        errorMessage.textContent = message;
+    }
+}
+
+       // Función para manejar selección de imagen de fallback
+       function handleFallbackImageSelect(event) {
+           const file = event.target.files[0];
+           const fileNameElement = document.getElementById('file-name');
+           
+           if (!file) {
+               fileNameElement.textContent = 'Selecciona un archivo';
+               return;
+           }
+           
+           // Validar archivo
+           if (!validateImageFile(file)) {
+               showToast('Por favor selecciona una imagen válida (JPG, PNG, WebP) menor a 5MB', 'error');
+               event.target.value = '';
+               fileNameElement.textContent = 'Selecciona un archivo';
+               return;
+           }
+           
+           // Actualizar nombre del archivo
+           fileNameElement.textContent = file.name;
+           
+           // Mostrar preview
+           const reader = new FileReader();
+           reader.onload = function(e) {
+               const preview = document.getElementById('image-preview');
+               const previewImg = document.getElementById('preview-img');
+               previewImg.src = e.target.result;
+               preview.classList.remove('hidden');
+           };
+           reader.readAsDataURL(file);
+       }
+
+// Función para validar archivo de imagen
+function validateImageFile(file) {
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    
+    if (!validTypes.includes(file.type)) {
+        return false;
+    }
+    
+    if (file.size > maxSize) {
+        return false;
+    }
+    
+    return true;
+}
+
+// Función para enviar formulario
+document.getElementById('add-source-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const sourceName = document.getElementById('source-name').value;
+    const rssUrl = document.getElementById('rss-url').value;
+    const category = document.getElementById('category').value;
+    const language = document.getElementById('language').value;
+    
+    // Validar campos requeridos
+    if (!sourceName || !rssUrl || !category || !language) {
+        showToast('Por favor completa todos los campos requeridos', 'error');
+        return;
+    }
+    
+    // Verificar duplicado ANTES de subir imagen de fallback
+    try {
+        const dupResp = await fetch('/api/sources/check-duplicate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rssUrl, category, language })
+        });
+            if (dupResp.ok) {
+            const dup = await dupResp.json();
+            if (dup.exists) {
+                await showToast({ title: t('duplicate_title'), message: t('duplicate_msg'), type: 'error' });
+                return; // No subimos imagen ni seguimos
+            }
+        }
+    } catch (_) { /* si falla, continuamos y el backend validará de nuevo */ }
+
+    // Subir imagen de fallback si está seleccionada
+    let fallbackImageId = null;
+    const fallbackImage = document.getElementById('fallback-image').files[0];
+    if (fallbackImage) {
+        const fallbackFormData = new FormData();
+        fallbackFormData.append('image', fallbackImage);
+        fallbackFormData.append('categoryCode', category);
+        fallbackFormData.append('languageCode', language);
+        
+        try {
+            const fallbackResponse = await fetch('/api/fallback-image/upload', {
+                method: 'POST',
+                body: fallbackFormData
+            });
+            
+            if (!fallbackResponse.ok) {
+                const fallbackResult = await fallbackResponse.json();
+                showToast('Error al subir imagen de fallback: ' + fallbackResult.error, 'error');
+                return;
+            }
+            
+            const fallbackResult = await fallbackResponse.json();
+            fallbackImageId = fallbackResult.id; // Obtener el ID de la imagen subida
+            console.log('Imagen de fallback subida exitosamente, ID:', fallbackImageId);
+        } catch (error) {
+            showToast('Error al subir imagen de fallback', 'error');
+            return;
+        }
+    }
+    
+    const requestData = {
+        sourceName: sourceName,
+        rssUrl: rssUrl,
+        category: category,
+        language: language,
+        fallbackImageId: fallbackImageId // Agregar ID de imagen de fallback si existe
+    };
+    
+    try {
+        // Mostrar estado de carga
+        const addButton = document.getElementById('add-source-form').querySelector('button[type="submit"]');
+        
+        addButton.disabled = true;
+        addButton.textContent = 'Agregando...';
+        addButton.classList.remove('bg-green-600', 'hover:bg-green-700');
+        addButton.classList.add('bg-blue-600', 'cursor-not-allowed');
+        
+        const response = await fetch('/api/sources/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            await showToast({ title: t('add_success_title'), message: t('add_success_msg'), type: 'success', details: { 'Nombre': sourceName, 'Categoría': category, 'Idioma': language } });
+            await loadUserSources();
+            document.getElementById('add-source-form').reset();
+            document.getElementById('image-preview').classList.add('hidden');
+            document.getElementById('file-name').textContent = 'Selecciona un archivo';
+            document.getElementById('advanced-options-dropdown').classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            document.getElementById('advanced-options-dropdown').classList.remove('opacity-100', 'scale-100');
+            window.location.reload();
+        } else {
+            const errorData = await response.json();
+            await showToast({ title: t('add_error_title'), message: (errorData.error || t('add_error_msg')), type: 'error' });
+        }
+    } catch (error) {
+        showToast(t('add_conn_error'), 'error');
+    } finally {
+        // Restaurar estado del botón
+        const addButton = document.getElementById('add-source-form').querySelector('button[type="submit"]');
+        
+        addButton.disabled = false;
+        addButton.textContent = 'Agregar Fuente';
+        addButton.classList.remove('bg-blue-600', 'cursor-not-allowed');
+        addButton.classList.add('bg-green-600', 'hover:bg-green-700');
+    }
+});
+
+// Agregar event listener para imagen de fallback
+document.getElementById('fallback-image').addEventListener('change', handleFallbackImageSelect);
+
+// Función para cargar fuentes del usuario
+async function loadUserSources() {
+    try {
+        console.log('Cargando fuentes del usuario...');
+        const response = await fetch('/api/sources/user');
+        const sources = await response.json();
+        
+        console.log('Fuentes recibidas:', sources);
+        
+        // Verificar si sources es null o undefined
+        if (!sources || !Array.isArray(sources)) {
+            console.log('No hay fuentes o respuesta inválida, mostrando lista vacía');
+            const sourcesList = document.getElementById('sources-list');
+            sourcesList.innerHTML = `
+                <div class="text-center text-gray-500 dark:text-gray-400 py-4">
+                    <svg class="w-8 h-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                    </svg>
+                    <p class="text-xs">No hay fuentes agregadas</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Aplicar filtros si están seleccionados
+        let filteredSources = filterSources(sources);
+        console.log('Fuentes filtradas:', filteredSources.length);
+        
+        // Aplicar ordenamiento por categoría (siempre)
+        let sortedSources = sortSources(filteredSources, 'category');
+        console.log('Fuentes ordenadas por categoría');
+        
+        const sourcesList = document.getElementById('sources-list');
+        
+        if (sortedSources.length === 0) {
+            console.log('No hay fuentes, mostrando mensaje vacío');
+            sourcesList.innerHTML = `
+                <div class="text-center text-gray-500 dark:text-gray-400 py-4">
+                    <svg class="w-8 h-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                    </svg>
+                    <p class="text-xs">No hay fuentes agregadas</p>
+                </div>
+            `;
+        } else {
+            console.log(`Renderizando ${sortedSources.length} fuentes:`, sortedSources);
+            sourcesList.innerHTML = sortedSources.map(source => `
+                <div class="border border-gray-200 dark:border-gray-700 rounded p-2 text-xs">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h5 class="font-medium text-gray-900 dark:text-white truncate">
+                                    <span id="src-name-${source.id}" class="cursor-pointer hover:underline" onclick="enableEditSourceName(${source.id}, event)">${source.sourceName}</span>
+                                </h5>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-400 truncate">${source.rssUrl}</p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                    ${source.category}
+                                </span>
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                    ${source.language}
+                                </span>
+                                <input id="fallback-input-${source.id}" type="file" accept="image/*" class="hidden" onchange="uploadSourceFallbackImage(${source.id}, this)" />
+                                <button class="ml-1 text-gray-500 hover:opacity-100 opacity-80 relative group" onclick="document.getElementById('fallback-input-${source.id}').click(); this.classList.add('scale-110'); setTimeout(()=>this.classList.remove('scale-110'),150);">
+                                    <img src="/images/imageicon.png" alt="Cambiar imagen" class="w-5 h-5" />
+                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 text-xs font-medium text-white bg-blue-600 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                                        ${t('fallback_image_label')}
+                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-blue-600"></div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end gap-1 ml-2">
+                            <!-- Botones de confirmación (ocultos por defecto) -->
+                            <div id="confirm-buttons-${source.id}" class="flex gap-1 opacity-0 pointer-events-none transition-all duration-200">
+                                <button 
+                                    onclick="confirmChanges(${source.id})"
+                                    class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-all duration-150 relative group"
+                                    data-tooltip="${t('confirm_changes')}"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 text-xs font-medium text-white bg-green-600 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                                        ${t('confirm_changes')}
+                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-green-600"></div>
+                                    </div>
+                                </button>
+                                <button 
+                                    onclick="cancelChanges(${source.id})"
+                                    class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 transition-all duration-150 relative group"
+                                    data-tooltip="${t('cancel_changes')}"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 text-xs font-medium text-white bg-gray-600 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                                        ${t('cancel_changes')}
+                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-600"></div>
+                                    </div>
+                                </button>
+                            </div>
+                            
+                            <!-- Botón de eliminar -->
+                            <button 
+                                onclick="deleteSource(${source.id})"
+                                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 relative group"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 text-xs font-medium text-white bg-red-600 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                                    ${t('delete_source')}
+                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-red-600"></div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('Error al cargar fuentes:', error);
+    }
+}
+
+// Función para eliminar fuente
+async function deleteSource(sourceId) {
+  const confirmed = await confirmModal(t('delete_confirm_title'), t('delete_confirm_msg'), t('delete_btn'), t('cancel_btn'));
+  if (!confirmed) return;
+
+  console.log('Eliminando fuente con ID:', sourceId);
+
+  try {
+    const response = await fetch(`/api/sources/${sourceId}`, { method: 'DELETE' });
+
+    console.log('Respuesta del servidor:', response.status, response.statusText);
+
+    if (response.ok) {
+      console.log('Fuente eliminada exitosamente, recargando lista...');
+      await showToast({ title: t('delete_success_title'), message: t('delete_success_msg'), type: 'success' });
+      await loadUserSources();
+      window.location.reload();
+    } else {
+      const errorData = await response.json();
+      console.error('Error del servidor:', errorData);
+      await showToast({ title: t('delete_error_title'), message: (errorData.error || 'Error desconocido'), type: 'error' });
+    }
+  } catch (error) {
+    console.error('Error de conexión:', error);
+    await showToast({ title: 'Error de conexión', message: t('delete_conn_error'), type: 'error' });
+  }
+}
+
+// Función para limpiar filtros
+function clearFilters() {
+    const clearButton = event.target;
+    
+    // Feedback visual
+    clearButton.classList.add('scale-110', 'text-blue-800', 'dark:text-blue-200');
+    setTimeout(() => {
+        clearButton.classList.remove('scale-110', 'text-blue-800', 'dark:text-blue-200');
+    }, 200);
+    
+    document.getElementById('category-filter').value = '';
+    document.getElementById('language-filter').value = '';
+    loadUserSources(); // Recargar sin filtros
+}
+
+// Función para aplicar filtros
+function applyFilters() {
+    const applyButton = event.target;
+    
+    // Feedback visual
+    applyButton.classList.add('scale-110', 'text-green-800', 'dark:text-green-200');
+    setTimeout(() => {
+        applyButton.classList.remove('scale-110', 'text-green-800', 'dark:text-green-200');
+    }, 200);
+    
+    loadUserSources(); // Recargar con los filtros aplicados
+}
+
+// Función para filtrar fuentes
+function filterSources(sources) {
+    const categoryFilter = document.getElementById('category-filter').value;
+    const languageFilter = document.getElementById('language-filter').value;
+    
+    console.log('Aplicando filtros:', { categoryFilter, languageFilter });
+    
+    return sources.filter(source => {
+        // Idioma es FILTRO: solo mostrar fuentes de ese idioma específico
+        const languageMatch = !languageFilter || source.language.toLowerCase() === languageFilter.toLowerCase();
+        
+        // Categoría es FILTRO opcional: si se selecciona, solo mostrar esa categoría
+        const categoryMatch = !categoryFilter || source.category.toLowerCase() === categoryFilter.toLowerCase();
+        
+        const shouldInclude = languageMatch && categoryMatch;
+        
+        if (!shouldInclude) {
+            console.log('Fuente filtrada:', source.sourceName, '- Idioma:', source.language, '- Categoría:', source.category);
+        }
+        
+        return shouldInclude;
+    });
+}
+
+// Función para ordenar fuentes
+function sortSources(sources, sortBy) {
+    if (!sortBy) return sources;
+    
+    return sources.sort((a, b) => {
+        switch (sortBy) {
+            case 'category':
+                return a.category.localeCompare(b.category);
+            case 'language':
+                return a.language.localeCompare(b.language);
+            case 'both':
+                const categoryCompare = a.category.localeCompare(b.category);
+                if (categoryCompare !== 0) return categoryCompare;
+                return a.language.localeCompare(b.language);
+            default:
+                return 0;
+        }
+    });
+}
+
+// Event listeners para los filtros
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryFilter = document.getElementById('category-filter');
+    const languageFilter = document.getElementById('language-filter');
+    
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', function() {
+            // No recargar automáticamente, esperar a que el usuario aplique
+        });
+    }
+    
+    if (languageFilter) {
+        languageFilter.addEventListener('change', function() {
+            // No recargar automáticamente, esperar a que el usuario aplique
+        });
+    }
+});
+
+// Variables globales para tracking de cambios
+const pendingChanges = new Map(); 
+
+// Habilitar edición en línea del nombre de la fuente
+async function enableEditSourceName(sourceId, event) {
+  // Prevenir que el click se propague y cierre el panel
+  event.stopPropagation();
+  
+  const span = document.getElementById(`src-name-${sourceId}`);
+  if (!span) return;
+  
+  const current = span.textContent;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = current;
+  input.className = 'border-b border-blue-500 outline-none bg-transparent text-gray-900 dark:text-white font-medium';
+  input.size = Math.max(10, current.length);
+  
+  // Reemplazar span con input
+  span.replaceWith(input);
+  input.focus();
+  input.select();
+
+  const commit = () => {
+    const newName = input.value.trim();
+    if (!newName || newName === current) { 
+      // Restaurar span original sin cambios
+      const newSpan = document.createElement('span');
+      newSpan.id = `src-name-${sourceId}`;
+      newSpan.className = 'cursor-pointer hover:underline';
+      newSpan.textContent = current;
+      newSpan.onclick = (e) => enableEditSourceName(sourceId, e);
+      input.replaceWith(newSpan);
+      return; 
+    }
+    
+    // Guardar cambio pendiente
+    if (!pendingChanges.has(sourceId)) {
+      pendingChanges.set(sourceId, {});
+    }
+    pendingChanges.get(sourceId).name = { 
+      oldValue: current, 
+      newValue: newName 
+    };
+    
+    // Crear nuevo span con el nombre temporal
+    const newSpan = document.createElement('span');
+    newSpan.id = `src-name-${sourceId}`;
+    newSpan.className = 'cursor-pointer hover:underline text-blue-600';
+    newSpan.textContent = newName;
+    newSpan.onclick = (e) => enableEditSourceName(sourceId, e);
+    input.replaceWith(newSpan);
+    
+    // Mostrar botones de confirmación
+    showConfirmButtons(sourceId);
+  };
+
+  input.addEventListener('keydown', e => { 
+    if (e.key === 'Enter') commit(); 
+    if (e.key === 'Escape') {
+      const newSpan = document.createElement('span');
+      newSpan.id = `src-name-${sourceId}`;
+      newSpan.className = 'cursor-pointer hover:underline';
+      newSpan.textContent = current;
+      newSpan.onclick = (e) => enableEditSourceName(sourceId, e);
+      input.replaceWith(newSpan);
+    }
+  });
+  input.addEventListener('blur', commit);
+}
+
+// Mostrar botones de confirmación
+function showConfirmButtons(sourceId) {
+  const confirmButtons = document.getElementById(`confirm-buttons-${sourceId}`);
+  if (confirmButtons) {
+    confirmButtons.classList.remove('opacity-0', 'pointer-events-none');
+    confirmButtons.classList.add('opacity-100', 'pointer-events-auto');
+  }
+}
+
+// Ocultar botones de confirmación
+function hideConfirmButtons(sourceId) {
+  const confirmButtons = document.getElementById(`confirm-buttons-${sourceId}`);
+  if (confirmButtons) {
+    confirmButtons.classList.add('opacity-0', 'pointer-events-none');
+    confirmButtons.classList.remove('opacity-100', 'pointer-events-auto');
+  }
+}
+
+// Confirmar cambios
+async function confirmChanges(sourceId) {
+  const changes = pendingChanges.get(sourceId);
+  if (!changes) return;
+  
+  // Feedback visual
+  const button = event.target.closest('button');
+  button.classList.add('scale-110');
+  setTimeout(() => button.classList.remove('scale-110'), 150);
+  
+  try {
+    const results = [];
+    
+    // Procesar cambios de nombre
+    if (changes.name) {
+      const res = await fetch(`/api/sources/${sourceId}`, { 
+        method: 'PUT', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ sourceName: changes.name.newValue }) 
+      });
+      
+      if (!res.ok) throw new Error('name update failed');
+      
+      // Actualizar dinámicamente en frontend
+      updateSourceNameInNews(sourceId, changes.name.newValue);
+      results.push('nombre');
+    }
+    
+    // Procesar cambios de imagen
+    if (changes.image) {
+      const form = new FormData();
+      form.append('image', changes.image.newValue);
+      
+      const res = await fetch(`/api/sources/${sourceId}/fallback-image`, { 
+        method: 'POST', 
+        body: form 
+      });
+      
+      if (!res.ok) throw new Error('image upload failed');
+      results.push('imagen');
+    }
+    
+    // Mostrar mensaje de éxito
+    let message;
+    if (results.length > 1) {
+      message = t('name_and_image_updated');
+    } else if (results[0] === 'nombre') {
+      message = t('name_updated');
+    } else if (results[0] === 'imagen') {
+      message = t('image_updated');
+    }
+    showToast({ title: 'OK', message: message, type: 'success', duration: 1800 });
+    
+    // Limpiar cambios pendientes
+    pendingChanges.delete(sourceId);
+    
+    // Ocultar botones de confirmación
+    hideConfirmButtons(sourceId);
+    
+    // Restaurar estilo normal del nombre
+    const span = document.getElementById(`src-name-${sourceId}`);
+    if (span) {
+      span.classList.remove('text-blue-600');
+    }
+    
+  } catch (error) {
+    showToast({ title: t('update_error'), message: t('update_error_msg'), type: 'error' });
+  }
+}
+
+// Cancelar cambios
+function cancelChanges(sourceId) {
+  const changes = pendingChanges.get(sourceId);
+  if (!changes) return;
+  
+  // Feedback visual
+  const button = event.target.closest('button');
+  button.classList.add('scale-110');
+  setTimeout(() => button.classList.remove('scale-110'), 150);
+  
+  // Restaurar nombre original si hay cambios de nombre
+  if (changes.name) {
+    const span = document.getElementById(`src-name-${sourceId}`);
+    if (span) {
+      span.textContent = changes.name.oldValue;
+      span.classList.remove('text-blue-600');
+    }
+  }
+  
+  // Restaurar imagen original si hay cambios de imagen
+  if (changes.image) {
+    // Aquí podríamos restaurar la imagen anterior si la tuviéramos guardada
+    console.log('Imagen cancelada');
+  }
+  
+  // Limpiar cambios pendientes
+  pendingChanges.delete(sourceId);
+  
+  // Ocultar botones de confirmación
+  hideConfirmButtons(sourceId);
+  
+  showToast({ title: t('changes_cancelled'), message: t('changes_discarded'), type: 'info', duration: 1500 });
+}
+
+// Función para actualizar dinámicamente el nombre de la fuente en todas las noticias
+function updateSourceNameInNews(sourceId, newName) {
+  // Obtener el nombre actual de la fuente antes de cambiarlo
+  const currentSpan = document.getElementById(`src-name-${sourceId}`);
+  const currentSourceName = currentSpan ? currentSpan.textContent.trim() : '';
+  
+  if (!currentSourceName) return;
+  
+  console.log('Actualizando fuente:', { sourceId, currentSourceName, newName });
+  
+  // Buscar todas las noticias que usan esta fuente
+  const newsCards = document.querySelectorAll('.news-card');
+  console.log('Encontradas', newsCards.length, 'tarjetas de noticias');
+  
+  let updatedCount = 0;
+  newsCards.forEach((card, index) => {
+    // Buscar el badge de fuente (span dentro del div absolute top-2 right-2)
+    const sourceBadge = card.querySelector('.absolute.top-2.right-2 span');
+    if (sourceBadge) {
+      const badgeText = sourceBadge.textContent.trim();
+      console.log(`Tarjeta ${index}: badge="${badgeText}", buscando="${currentSourceName}"`);
+      
+      // Si el badge coincide con el nombre actual de la fuente, actualizarlo
+      if (badgeText === currentSourceName) {
+        sourceBadge.textContent = newName;
+        updatedCount++;
+        console.log(`✓ Actualizada tarjeta ${index}`);
+      }
+    }
+  });
+  
+  console.log(`Total actualizadas: ${updatedCount} tarjetas`);
+  
+  // También actualizar en el filtro de fuentes si está visible
+  const sourceFilter = document.querySelector('#source-filter');
+  if (sourceFilter) {
+    const options = sourceFilter.querySelectorAll('option');
+    options.forEach(option => {
+      if (option.textContent.trim() === currentSourceName) {
+        option.textContent = newName;
+        console.log('✓ Actualizada opción en filtro');
+      }
+    });
+  }
+  
+  // Actualizar en el filtro de fuentes disponibles (AvailableSources)
+  const availableSources = document.querySelectorAll('[data-source-name]');
+  availableSources.forEach(element => {
+    if (element.getAttribute('data-source-name') === currentSourceName) {
+      element.setAttribute('data-source-name', newName);
+      element.textContent = newName;
+      console.log('✓ Actualizada fuente disponible');
+    }
+  });
+  
+  // Forzar recarga de la página si no se actualizó nada (fallback)
+  if (updatedCount === 0) {
+    console.log('No se encontraron noticias para actualizar, recargando página...');
+    // Guardar estado de configuración abierta antes de recargar
+    localStorage.setItem('configOpen', 'true');
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  }
+}
+
+// Función para mantener configuración abierta después de recargar
+function restoreConfigState() {
+  const configOpen = localStorage.getItem('configOpen');
+  if (configOpen === 'true') {
+    // Abrir configuración automáticamente
+    const configButton = document.querySelector('[data-config-button]');
+    if (configButton) {
+      configButton.click();
+    }
+    // Limpiar el estado guardado
+    localStorage.removeItem('configOpen');
+  }
+}
+
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', restoreConfigState);
+
+// Subir nueva imagen de fallback para una fuente
+async function uploadSourceFallbackImage(sourceId, fileInput) {
+  const file = fileInput.files && fileInput.files[0];
+  if (!file) return;
+  
+  const okTypes = ['image/jpeg','image/jpg','image/png','image/webp'];
+  if (!okTypes.includes(file.type) || file.size > 5*1024*1024) {
+    showToast('Imagen no válida (JPG/PNG/WebP, máx 5MB)', 'error');
+    return;
+  }
+  
+  // Guardar cambio pendiente
+  if (!pendingChanges.has(sourceId)) {
+    pendingChanges.set(sourceId, {});
+  }
+  pendingChanges.get(sourceId).image = { 
+    oldValue: null, 
+    newValue: file 
+  };
+  
+  // Mostrar botones de confirmación
+  showConfirmButtons(sourceId);
+  
+  // Limpiar input
+  fileInput.value = '';
+  
+  showToast({ title: t('image_selected'), message: t('confirm_change'), type: 'info', duration: 2000 });
+}
+</script>
+
+<script>
+// Toast notifications (top center) ampliado con cierre manual y Promise
+// Uso: await showToast({ title, message, type, duration, details });
+function showToast(arg, typeFallback = 'info') {
+  const opts = typeof arg === 'string' ? { message: arg, type: typeFallback } : (arg || {});
+  const { title, message = '', type = 'info', duration = 4200, details } = opts;
+
+  return new Promise((resolve) => {
+    let container = document.getElementById('app-toasts');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'app-toasts';
+      container.style.position = 'fixed';
+      container.style.top = '16px';
+      container.style.left = '50%';
+      container.style.transform = 'translateX(-50%)';
+      container.style.zIndex = '1000';
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.gap = '12px';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.style.position = 'relative';
+    toast.style.minWidth = '340px';
+    toast.style.maxWidth = '94vw';
+    toast.style.padding = '14px 16px 14px 16px';
+    toast.style.borderRadius = '12px';
+    toast.style.boxShadow = '0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04)';
+    toast.style.border = '1px solid';
+    toast.style.transition = 'all .28s ease';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-10px)';
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const palette = {
+      success: isDark ? ['#064e3b','#d1fae5','#065f46'] : ['#ecfdf5','#065f46','#a7f3d0'],
+      error:   isDark ? ['#7f1d1d','#fee2e2','#7f1d1d'] : ['#fef2f2','#991b1b','#fecaca'],
+      info:    isDark ? ['#0c4a6e','#e0f2fe','#075985'] : ['#eff6ff','#1e3a8a','#bfdbfe']
+    }[type] || (isDark ? ['#111827','#e5e7eb','#374151'] : ['#ffffff','#111827','#e5e7eb']);
+
+    toast.style.background = palette[0];
+    toast.style.color = palette[1];
+    toast.style.borderColor = palette[2];
+
+    // Botón de cierre (X)
+    const closeBtn = document.createElement('button');
+    closeBtn.setAttribute('aria-label','Cerrar');
+    closeBtn.style.position = 'absolute';
+    closeBtn.style.top = '6px';
+    closeBtn.style.right = '8px';
+    closeBtn.style.background = 'transparent';
+    closeBtn.style.border = 'none';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.style.color = isDark ? '#fca5a5' : '#b91c1c';
+    closeBtn.style.fontSize = '18px';
+    closeBtn.style.lineHeight = '1';
+    closeBtn.textContent = '×';
+
+    // Contenido
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    wrap.style.gap = '6px';
+
+    if (title) {
+      const h = document.createElement('div');
+      h.style.fontSize = '1rem';
+      h.style.fontWeight = '700';
+      h.textContent = title;
+      wrap.appendChild(h);
+    }
+
+    const msg = document.createElement('div');
+    msg.style.fontSize = '0.95rem';
+    msg.style.lineHeight = '1.35';
+    msg.textContent = message;
+    wrap.appendChild(msg);
+
+    if (details && typeof details === 'object') {
+      const grid = document.createElement('div');
+      grid.style.display = 'grid';
+      grid.style.gridTemplateColumns = 'auto 1fr';
+      grid.style.columnGap = '10px';
+      grid.style.rowGap = '4px';
+      grid.style.fontSize = '0.9rem';
+
+      Object.entries(details).forEach(([k, v]) => {
+        const kEl = document.createElement('div');
+        kEl.style.opacity = '0.8';
+        kEl.style.fontWeight = '600';
+        kEl.textContent = k + ':';
+        const vEl = document.createElement('div');
+        vEl.style.wordBreak = 'break-word';
+        vEl.textContent = String(v || '—');
+        grid.appendChild(kEl);
+        grid.appendChild(vEl);
+      });
+
+      wrap.appendChild(grid);
+    }
+
+    toast.appendChild(wrap);
+    toast.appendChild(closeBtn);
+    container.appendChild(toast);
+
+    // Animación de entrada
+    requestAnimationFrame(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; });
+
+    let closed = false;
+    const finish = () => {
+      if (closed) return;
+      closed = true;
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-10px)';
+      setTimeout(() => { toast.remove(); resolve(); }, 280);
+    };
+
+    // Cierre por botón o por tiempo
+    closeBtn.addEventListener('click', finish);
+    const tmo = setTimeout(finish, duration);
+  });
+}
+
+// Custom confirm modal (returns Promise<boolean>)
+function confirmModal(title = 'Confirmación', message = '¿Seguro?', confirmText = 'Aceptar', cancelText = 'Cancelar') {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'confirm-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = 'confirm-modal';
+
+    const h3 = document.createElement('h3');
+    h3.textContent = title;
+    const p = document.createElement('p');
+    p.textContent = message;
+
+    const actions = document.createElement('div');
+    actions.className = 'confirm-actions';
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'confirm-btn confirm-btn-secondary';
+    cancelBtn.textContent = cancelText;
+
+    const okBtn = document.createElement('button');
+    okBtn.className = 'confirm-btn confirm-btn-primary';
+    okBtn.textContent = confirmText;
+
+    actions.appendChild(cancelBtn);
+    actions.appendChild(okBtn);
+
+    modal.appendChild(h3);
+    modal.appendChild(p);
+    modal.appendChild(actions);
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    const cleanup = (result) => {
+      overlay.style.animation = 'fadeOut .15s ease';
+      modal.style.transform = 'translateY(-8px)';
+      modal.style.opacity = '0';
+      setTimeout(() => overlay.remove(), 150);
+      resolve(result);
+    };
+
+    cancelBtn.addEventListener('click', () => cleanup(false));
+    okBtn.addEventListener('click', () => cleanup(true));
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
+    window.addEventListener('keydown', function esc(e){ if (e.key === 'Escape'){ cleanup(false); window.removeEventListener('keydown', esc);} });
+  });
+}
+</script>
+
+<header class="bg-white shadow-sm border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo y título -->
+            <div class="flex items-center" style="margin-right: 2rem;">
+                <a href="/" class="flex items-center space-x-3 group">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-700 transition-colors">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                            DailyNews
+                        </h1>
+                        <p id="i18n-tagline" class="text-xs text-gray-500">Tu portal de noticias</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Navegación principal -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="/" class="nav-link i18n-nav-home {{if not .CurrentCategory}}active{{end}}" onclick="navigateWithLang(event, '/')">
+                    Inicio
+                </a>
+                <a href="/categoria/technology" class="nav-link i18n-nav-technology {{if eq .CurrentCategory "technology"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/technology')">
+                    Tecnología
+                </a>
+                <a href="/categoria/economy" class="nav-link i18n-nav-economy {{if eq .CurrentCategory "economy"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/economy')">
+                    Economía
+                </a>
+                <a href="/categoria/sports" class="nav-link i18n-nav-sports {{if eq .CurrentCategory "sports"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/sports')">
+                    Deportes
+                </a>
+                <a href="/categoria/entertainment" class="nav-link i18n-nav-entertainment {{if eq .CurrentCategory "entertainment"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/entertainment')">
+                    Entretenimiento
+                </a>
+                <a href="/categoria/health" class="nav-link i18n-nav-health {{if eq .CurrentCategory "health"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/health')">
+                    Salud
+                </a>
+                <a href="/categoria/international" class="nav-link i18n-nav-international {{if eq .CurrentCategory "international"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/international')">
+                    Internacional
+                </a>
+                <a href="/categoria/culture" class="nav-link i18n-nav-culture {{if eq .CurrentCategory "culture"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/culture')">
+                    Cultura
+                </a>
+                <a href="/categoria/breaking" class="nav-link i18n-nav-breaking {{if eq .CurrentCategory "breaking"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/breaking')">
+                    Destacado
+                </a>
+            </nav>
+
+            <!-- Botones de acción -->
+            <div class="flex items-center space-x-4" style="margin-left: 2rem;">
+                <!-- Botón de modo oscuro -->
+                <button 
+                    type="button"
+                    onclick="toggleDarkMode()"
+                    class="btn btn-secondary text-sm px-4 py-2"
+                    title="Cambiar tema"
+                    id="dark-mode-btn"
+                >
+                    <span class="dark-mode-text">Cambiar tema</span>
+                </button>
+
+                <!-- Menú móvil -->
+                <button 
+                    type="button"
+                    onclick="toggleMobileMenu()"
+                    class="md:hidden btn btn-secondary p-2"
+                    aria-label="Abrir menú móvil"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menú móvil -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200">
+                <a href="/" class="mobile-nav-link i18n-nav-home {{if not .CurrentCategory}}active{{end}}" onclick="navigateWithLang(event, '/')">
+                    Inicio
+                </a>
+                <a href="/categoria/technology" class="mobile-nav-link i18n-nav-technology {{if eq .CurrentCategory "technology"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/technology')">
+                    Tecnología
+                </a>
+                <a href="/categoria/economy" class="mobile-nav-link i18n-nav-economy {{if eq .CurrentCategory "economy"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/economy')">
+                    Economía
+                </a>
+                <a href="/categoria/sports" class="mobile-nav-link i18n-nav-sports {{if eq .CurrentCategory "sports"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/sports')">
+                    Deportes
+                </a>
+                <a href="/categoria/entertainment" class="mobile-nav-link i18n-nav-entertainment {{if eq .CurrentCategory "entertainment"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/entertainment')">
+                    Entretenimiento
+                </a>
+                <a href="/categoria/health" class="mobile-nav-link i18n-nav-health {{if eq .CurrentCategory "health"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/health')">
+                    Salud
+                </a>
+                <a href="/categoria/international" class="mobile-nav-link i18n-nav-international {{if eq .CurrentCategory "international"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/international')">
+                    Internacional
+                </a>
+                <a href="/categoria/culture" class="mobile-nav-link i18n-nav-culture {{if eq .CurrentCategory "culture"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/culture')">
+                    Cultura
+                </a>
+                <a href="/categoria/breaking" class="mobile-nav-link i18n-nav-breaking {{if eq .CurrentCategory "breaking"}}active{{end}}" onclick="navigateWithLang(event, '/categoria/breaking')">
+                    Destacado
+                </a>
+                <!-- Botón de modo oscuro en menú móvil -->
+                <button 
+                    type="button"
+                    onclick="toggleDarkMode()"
+                    class="mobile-nav-link w-full text-left"
+                    title="Cambiar tema"
+                    id="dark-mode-btn-mobile"
+                >
+                    <span class="dark-mode-text">Cambiar tema</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+// Función para navegar preservando el idioma seleccionado
+function navigateWithLang(event, url) {
+    event.preventDefault();
+    const currentLang = new URLSearchParams(window.location.search).get('lang');
+    if (currentLang) {
+        url += '?lang=' + currentLang;
+    }
+    window.location.href = url;
+}
+</script>
+{{end}}

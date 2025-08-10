@@ -1,0 +1,29 @@
+{
+  "name": "dailynews-frontend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Frontend assets para DailyNews - NO SPA con Vue 3 y Tailwind",
+  "main": "assets/js/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "watch": "vite build --watch"
+  },
+  "keywords": [
+    "vue3",
+    "tailwind",
+    "no-spa",
+    "news"
+  ],
+  "author": "DailyNews Team",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "tailwindcss": "^4.1.11",
+    "vite": "^7.0.6"
+  },
+  "dependencies": {
+    "vue": "^3.5.18"
+  }
+}

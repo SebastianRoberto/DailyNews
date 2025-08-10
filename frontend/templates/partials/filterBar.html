@@ -1,0 +1,909 @@
+{{define "filterBar"}}
+<div class="filter-bar bg-white border-b border-gray-200 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Filtros principales en una sola fila -->
+        <div class="flex flex-wrap items-center justify-between space-x-4">
+            <!-- Búsqueda (más compacta) -->
+            <div class="flex-1 min-w-0 lg:max-w-xs">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        placeholder="Buscar noticias..."
+                        value="{{.SearchQuery}}"
+                        class="w-full pl-8 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 search-input"
+                        onkeypress="onSearchKeypress(event)"
+                    >
+                    <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selector de idioma (compacto) -->
+            <div class="flex items-center space-x-2">
+                <label for="language-select" class="text-sm font-medium text-gray-700 search-label">Idioma:</label>
+                <div class="relative">
+                    <select 
+                        id="language-select"
+                        class="text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 appearance-none bg-white cursor-pointer pr-8"
+                        onchange="onLanguageChange(this.value)"
+                    >
+                        <option value="">Todos</option>
+                        {{range .Languages}}
+                            <option value="{{.Code}}" {{if eq .Code $.CurrentLang}}selected{{end}}>
+                                {{.Name}}
+                            </option>
+                        {{end}}
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón de filtros avanzados -->
+            <button 
+                type="button"
+                onclick="toggleAdvancedFilters()"
+                class="btn btn-secondary text-sm px-3 py-2 transition-all duration-200 hover:bg-gray-300"
+                title="Filtros avanzados"
+                id="advanced-filters-btn"
+            >
+                <svg class="w-4 h-4 mr-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
+                </svg>
+                <span id="i18n-filters">Filtros</span>
+            </button>
+
+            <!-- Botón de actualizar -->
+            <button 
+                type="button"
+                onclick="refreshNews()"
+                class="btn btn-primary text-sm px-3 py-2"
+                title="Actualizar noticias"
+            >
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span id="i18n-refresh">Actualizar</span>
+            </button>
+        </div>
+
+        <!-- Panel de filtros avanzados (oculto por defecto) -->
+        <div id="advanced-filters-panel" class="hidden mt-4 pt-4 border-t border-gray-200 transform transition-all duration-300 ease-in-out opacity-0 scale-95">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Filtro de fuentes múltiples -->
+                <div>
+                    <label id="i18n-sources-label" class="block text-sm font-medium text-gray-700 mb-2">Fuentes:</label>
+                    <div class="space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
+                        {{range .AvailableSources}}
+                            <label class="flex items-center hover:bg-gray-50 p-1 rounded transition-colors duration-150 dark:hover:bg-gray-600">
+                                <input 
+                                    type="checkbox" 
+                                    value="{{.}}"
+                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-colors duration-150"
+                                    onchange="onSourceFilterChange()"
+                                    data-source="{{.}}"
+                                >
+                                <span class="ml-2 text-sm text-gray-700 dark:text-white">{{.}}</span>
+                            </label>
+                        {{end}}
+                    </div>
+                </div>
+
+                <!-- Filtro de rango de fechas (más compacto) -->
+                <div>
+                    <label id="i18n-period" class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Período:</label>
+                    <div class="relative">
+                        <!-- Select nativo oculto -->
+                        <select 
+                            id="date-range-select"
+                            class="hidden"
+                            onchange="onDateRangeChange()"
+                        >
+                            <option id="i18n-all-periods-opt" value="">Todos los períodos</option>
+                            <option id="i18n-today-opt" value="today">Hoy</option>
+                            <option id="i18n-yesterday-opt" value="yesterday">Ayer</option>
+                            <option id="i18n-this-week-opt" value="this_week">Esta semana</option>
+                            <option id="i18n-custom-range-opt" value="custom">Rango personalizado</option>
+                        </select>
+                        
+                        <!-- Desplegable personalizado -->
+                        <div class="relative">
+                            <button 
+                                type="button"
+                                id="date-range-button"
+                                class="w-full text-left text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 bg-white cursor-pointer dark:bg-gray-700 dark:border-gray-600 dark:text-white pr-8 py-2 px-3"
+                                onclick="toggleDateRangeDropdown()"
+                            >
+                                <span id="date-range-display">Todos los períodos</span>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                    <svg id="date-range-icon" class="h-4 w-4 text-gray-400 transition-transform duration-200 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </button>
+                            
+                            <!-- Dropdown personalizado -->
+                            <div 
+                                id="date-range-dropdown"
+                                class="absolute z-50 w-48 mt-1 bg-white border border-gray-300 rounded-md shadow-lg opacity-0 scale-95 transform transition-all duration-200 ease-out pointer-events-none dark:bg-gray-700 dark:border-gray-600"
+                            >
+                                <div class="py-1">
+                                    <button 
+                                        type="button"
+                                        class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 transition-colors duration-150"
+                                        onclick="selectDateRange('', document.getElementById('i18n-all-periods').textContent)"
+                                    >
+                                        <span id="i18n-all-periods">Todos los períodos</span>
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 transition-colors duration-150"
+                                        onclick="selectDateRange('today', document.getElementById('i18n-today').textContent)"
+                                    >
+                                        <span id="i18n-today">Hoy</span>
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 transition-colors duration-150"
+                                        onclick="selectDateRange('yesterday', document.getElementById('i18n-yesterday').textContent)"
+                                    >
+                                        <span id="i18n-yesterday">Ayer</span>
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 transition-colors duration-150"
+                                        onclick="selectDateRange('this_week', document.getElementById('i18n-this-week').textContent)"
+                                    >
+                                        <span id="i18n-this-week">Esta semana</span>
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 transition-colors duration-150"
+                                        onclick="selectDateRange('custom', document.getElementById('i18n-custom-range').textContent)"
+                                    >
+                                        <span id="i18n-custom-range">Rango personalizado</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fechas personalizadas (ocultas por defecto) -->
+                    <div id="custom-date-inputs" class="hidden mt-2 space-y-2 animate-fade-in">
+                        <div class="flex space-x-2">
+                            <div class="flex-1">
+                                <label id="i18n-from" class="block text-xs text-gray-600 dark:text-gray-400">Desde:</label>
+                                <input 
+                                    type="date" 
+                                    id="date-from"
+                                    class="w-full text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    onchange="onCustomDateChange()"
+                                >
+                            </div>
+                            <div class="flex-1">
+                                <label id="i18n-to" class="block text-xs text-gray-600 dark:text-gray-400">Hasta:</label>
+                                <input 
+                                    type="date" 
+                                    id="date-to"
+                                    class="w-full text-sm border border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    onchange="onCustomDateChange()"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones de filtros -->
+                <div class="flex flex-col justify-end space-y-4" style="margin-bottom: 15px;">
+                    <button 
+                        type="button"
+                        onclick="applyAdvancedFilters()"
+                        class="btn btn-primary text-sm px-4 py-2 transition-all duration-200 hover:bg-blue-700"
+                    >
+                        <span id="i18n-apply-filters">Aplicar filtros</span>
+                    </button>
+                    
+                    <button 
+                        type="button"
+                        onclick="clearAdvancedFilters()"
+                        class="btn btn-secondary text-sm px-4 py-2 transition-all duration-200 hover:bg-gray-300"
+                        style="margin-top: 8px;"
+                    >
+                        <span id="i18n-clear-filters">Limpiar filtros</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados de búsqueda (si aplica) -->
+        {{if .SearchQuery}}
+            <div class="mt-3 pt-3 border-t border-gray-200">
+                <p class="text-sm text-gray-600 search-label">
+                    <span id="i18n-results-for">Resultados para:</span> <span class="font-medium text-gray-900">"{{.SearchQuery}}"</span>
+                    <button 
+                        type="button"
+                        onclick="clearSearch()"
+                        class="ml-2 text-blue-600 hover:text-blue-800 underline"
+                    >
+                        <span id="i18n-clear-search">Limpiar búsqueda</span>
+                    </button>
+                </p>
+            </div>
+        {{end}}
+    </div>
+</div>
+
+<style>
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animación para el icono del select */
+#date-range-select:focus + div svg,
+#language-select:focus + div svg {
+    transform: rotate(180deg);
+}
+
+/* Animación suave para las opciones del select */
+#date-range-select option {
+    transition: all 0.2s ease-in-out;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+#date-range-select:focus option {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animación para el desplegable completo */
+#date-range-select {
+    transition: all 0.3s ease-in-out;
+}
+
+#date-range-select:focus {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos específicos para modo oscuro */
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+    background: #374151;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #6b7280;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Mejorar visibilidad de inputs en modo oscuro */
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+.dark select option {
+    background-color: #374151;
+    color: white;
+}
+
+.dark select option:hover {
+    background-color: #4b5563;
+}
+
+/* Estilos específicos para fechas seleccionadas en modo oscuro */
+.dark input[type="date"] {
+    color: white !important;
+}
+
+.dark input[type="date"]::-webkit-datetime-edit {
+    color: white !important;
+}
+
+.dark input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+    color: white !important;
+}
+
+.dark input[type="date"]::-webkit-datetime-edit-text {
+    color: white !important;
+}
+
+.dark input[type="date"]::-webkit-datetime-edit-month-field {
+    color: white !important;
+}
+
+.dark input[type="date"]::-webkit-datetime-edit-day-field {
+    color: white !important;
+}
+
+.dark input[type="date"]::-webkit-datetime-edit-year-field {
+    color: white !important;
+}
+
+/* Estilos para el select de período en modo oscuro */
+.dark select {
+    color: white !important;
+}
+
+.dark select option {
+    color: white !important;
+    background-color: #374151 !important;
+}
+
+.dark select option:checked {
+    background-color: #1f2937 !important;
+    color: white !important;
+}
+
+.dark select option:hover {
+    background-color: #4b5563 !important;
+}
+
+/* CSS específico para los inputs del modal de configuración RSS */
+/* Modo oscuro */
+.dark #source-name,
+.dark #rss-url {
+    color: white !important;
+}
+
+.dark #source-name::placeholder,
+.dark #rss-url::placeholder {
+    color: #d1d5db !important;
+    opacity: 1;
+}
+
+/* Modo claro */
+#source-name,
+#rss-url {
+    color: #374151 !important;
+}
+
+#source-name::placeholder,
+#rss-url::placeholder {
+    color: #9ca3af !important;
+    opacity: 1;
+}
+
+/* Estilos para el input de archivo personalizado */
+.file-input-container {
+    position: relative;
+    width: 100%;
+}
+
+.file-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #f9fafb;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.dark .file-input-label {
+    border-color: #4b5563;
+    background: #374151;
+}
+
+.file-input-text {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    background: #e5e7eb;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    border-right: 1px solid #d1d5db;
+}
+
+.dark .file-input-text {
+    background: #4b5563;
+    color: white;
+    border-right-color: #6b7280;
+}
+
+.file-input-filename {
+    flex: 1;
+    padding: 8px 12px;
+    color: #6b7280;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .dark .file-input-filename {
+        color: #d1d5db;
+    }
+    
+    /* Estilos para la barra de scroll personalizada */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 3px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+    
+    .dark .custom-scrollbar::-webkit-scrollbar-track {
+        background: #374151;
+    }
+    
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #6b7280;
+    }
+    
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+    }
+
+.file-input:hover .file-input-label {
+    border-color: #3b82f6;
+}
+
+.dark .file-input:hover .file-input-label {
+    border-color: #60a5fa;
+}
+
+</style>
+
+<script>
+// Variables globales para filtros
+let advancedFilters = {
+    sources: [],
+    dateRange: '',
+    dateFrom: '',
+    dateTo: ''
+};
+
+// Función para obtener parámetros de la URL
+function getUrlParameter(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+}
+
+// Función para obtener múltiples parámetros de la URL
+function getUrlParameters(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.getAll(name);
+}
+
+// Función para inicializar el estado de los filtros desde la URL
+function initializeFilterState() {
+    // Inicializar filtros de fuentes
+    const sources = getUrlParameters('sources');
+    if (sources.length > 0) {
+        advancedFilters.sources = sources;
+        sources.forEach(source => {
+            const checkbox = document.querySelector(`input[data-source="${source}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        });
+    }
+
+    // Inicializar filtros de fecha
+    const dateRange = getUrlParameter('date_range');
+    const dateFrom = getUrlParameter('date_from');
+    const dateTo = getUrlParameter('date_to');
+
+    if (dateRange) {
+        advancedFilters.dateRange = dateRange;
+        const select = document.getElementById('date-range-select');
+        const display = document.getElementById('date-range-display');
+        
+        if (select) {
+            select.value = dateRange;
+        }
+        
+        if (display) {
+            // texto usando i18n
+            if (typeof t === 'function') {
+                const keyMap = { today: 'today', yesterday: 'yesterday', this_week: 'this_week', custom: 'custom_range' };
+                display.textContent = t(keyMap[dateRange]) || t('all_periods');
+            } else {
+                const textMap = { today: 'Hoy', yesterday: 'Ayer', this_week: 'Esta semana', custom: 'Rango personalizado' };
+                display.textContent = textMap[dateRange] || 'Todos los períodos';
+            }
+        }
+    } else if (dateFrom || dateTo) {
+        advancedFilters.dateFrom = dateFrom || '';
+        advancedFilters.dateTo = dateTo || '';
+        
+        const select = document.getElementById('date-range-select');
+        const display = document.getElementById('date-range-display');
+        const customInputs = document.getElementById('custom-date-inputs');
+        const dateFromInput = document.getElementById('date-from');
+        const dateToInput = document.getElementById('date-to');
+        
+        if (select) {
+            select.value = 'custom';
+        }
+        if (display) { display.textContent = (typeof t==='function'? t('custom_range') : 'Rango personalizado'); }
+        if (customInputs) {
+            customInputs.classList.remove('hidden');
+        }
+        if (dateFromInput && dateFrom) {
+            dateFromInput.value = dateFrom;
+        }
+        if (dateToInput && dateTo) {
+            dateToInput.value = dateTo;
+        }
+    }
+}
+
+function onSearchKeypress(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        performSearch();
+    }
+}
+
+function performSearch() {
+    const searchInput = document.getElementById('search-input');
+    const query = searchInput.value.trim();
+    
+    if (query) {
+        // Obtener el idioma actual de la URL
+        const url = new URL(window.location);
+        const currentLang = url.searchParams.get('lang') || 'es';
+        
+        // Construir URL de búsqueda preservando el idioma
+        const searchUrl = `/buscar?q=${encodeURIComponent(query)}&lang=${currentLang}`;
+        window.location.href = searchUrl;
+    }
+}
+
+function clearSearch() {
+    const searchInput = document.getElementById('search-input');
+    searchInput.value = '';
+    
+    const url = new URL(window.location);
+    url.searchParams.delete('q');
+    window.location.href = url.toString();
+}
+
+function onLanguageChange(language) {
+    const url = new URL(window.location);
+    if (language) {
+        url.searchParams.set('lang', language);
+    } else {
+        url.searchParams.delete('lang');
+    }
+    window.location.href = url.toString();
+}
+
+function refreshNews() {
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.innerHTML = `
+        <svg class="w-4 h-4 mr-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Actualizando...
+    `;
+    button.disabled = true;
+    
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+}
+
+function toggleAdvancedFilters() {
+    const panel = document.getElementById('advanced-filters-panel');
+    const button = document.getElementById('advanced-filters-btn');
+    const icon = button.querySelector('svg');
+    
+    if (panel.classList.contains('hidden')) {
+        // Mostrar panel con animación
+        panel.classList.remove('hidden');
+        button.classList.add('bg-blue-100', 'text-blue-800');
+        icon.style.transform = 'rotate(180deg)';
+        
+        // Animar entrada
+        setTimeout(() => {
+            panel.classList.remove('opacity-0', 'scale-95');
+            panel.classList.add('opacity-100', 'scale-100');
+        }, 10);
+    } else {
+        // Ocultar panel con animación
+        panel.classList.add('opacity-0', 'scale-95');
+        button.classList.remove('bg-blue-100', 'text-blue-800');
+        icon.style.transform = 'rotate(0deg)';
+        
+        // Ocultar después de la animación
+        setTimeout(() => {
+            panel.classList.add('hidden');
+            // Resetear las clases para la próxima vez
+            panel.classList.remove('opacity-100', 'scale-100');
+        }, 300);
+    }
+}
+
+function onSourceFilterChange() {
+    const checkboxes = document.querySelectorAll('#advanced-filters-panel input[type="checkbox"]');
+    advancedFilters.sources = [];
+    
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            advancedFilters.sources.push(checkbox.value);
+        }
+    });
+}
+
+function onDateRangeChange() {
+    const select = document.getElementById('date-range-select');
+    const customInputs = document.getElementById('custom-date-inputs');
+    const icon = document.getElementById('date-range-icon');
+    const display = document.getElementById('date-range-display');
+    const dropdown = document.getElementById('date-range-dropdown');
+    
+    if (select.value === 'custom') {
+        customInputs.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+        dropdown.classList.add('pointer-events-auto', 'opacity-100', 'scale-100');
+        display.textContent = 'Rango personalizado';
+    } else {
+        customInputs.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+        dropdown.classList.remove('pointer-events-auto', 'opacity-100', 'scale-100');
+        display.textContent = select.options[select.selectedIndex].textContent;
+        advancedFilters.dateRange = select.value;
+        advancedFilters.dateFrom = '';
+        advancedFilters.dateTo = '';
+    }
+}
+
+function toggleDateRangeDropdown() {
+    const dropdown = document.getElementById('date-range-dropdown');
+    const icon = document.getElementById('date-range-icon');
+    
+    if (dropdown.classList.contains('pointer-events-none')) {
+        // Abrir dropdown con animación
+        dropdown.classList.remove('pointer-events-none', 'opacity-0', 'scale-95');
+        dropdown.classList.add('pointer-events-auto', 'opacity-100', 'scale-100');
+        icon.style.transform = 'rotate(180deg)';
+        // Asegurar que las opciones internas estén traducidas antes de abrir
+        if (typeof t === 'function') {
+            const map = [
+                ['i18n-all-periods','all_periods'],
+                ['i18n-today','today'],
+                ['i18n-yesterday','yesterday'],
+                ['i18n-this-week','this_week'],
+                ['i18n-custom-range','custom_range'],
+                ['i18n-all-periods-opt','all_periods'],
+                ['i18n-today-opt','today'],
+                ['i18n-yesterday-opt','yesterday'],
+                ['i18n-this-week-opt','this_week'],
+                ['i18n-custom-range-opt','custom_range']
+            ];
+            map.forEach(([id,key]) => { const el = document.getElementById(id); if (el) el.textContent = t(key); });
+        }
+    } else {
+        // Cerrar dropdown con animación
+        dropdown.classList.add('pointer-events-none', 'opacity-0', 'scale-95');
+        dropdown.classList.remove('pointer-events-auto', 'opacity-100', 'scale-100');
+        icon.style.transform = 'rotate(0deg)';
+    }
+}
+
+function selectDateRange(value, text) {
+    const select = document.getElementById('date-range-select');
+    const customInputs = document.getElementById('custom-date-inputs');
+    const icon = document.getElementById('date-range-icon');
+    const dropdown = document.getElementById('date-range-dropdown');
+    const display = document.getElementById('date-range-display');
+
+    // Actualizar select nativo
+    select.value = value;
+    
+    // Actualizar display
+    display.textContent = text;
+    
+    // Cerrar dropdown con animación
+    dropdown.classList.add('pointer-events-none', 'opacity-0', 'scale-95');
+    dropdown.classList.remove('pointer-events-auto', 'opacity-100', 'scale-100');
+    icon.style.transform = 'rotate(0deg)';
+    
+    // Manejar fechas personalizadas
+    if (value === 'custom') {
+        customInputs.classList.remove('hidden');
+        advancedFilters.dateRange = 'custom';
+    } else {
+        customInputs.classList.add('hidden');
+        advancedFilters.dateRange = value;
+        advancedFilters.dateFrom = '';
+        advancedFilters.dateTo = '';
+    }
+}
+
+// Cerrar dropdown al hacer click fuera
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('date-range-dropdown');
+    const button = document.getElementById('date-range-button');
+    
+    if (dropdown && !dropdown.contains(event.target) && !button.contains(event.target)) {
+        dropdown.classList.add('pointer-events-none', 'opacity-0', 'scale-95');
+        dropdown.classList.remove('pointer-events-auto', 'opacity-100', 'scale-100');
+        
+        const icon = document.getElementById('date-range-icon');
+        if (icon) {
+            icon.style.transform = 'rotate(0deg)';
+        }
+    }
+});
+
+function onCustomDateChange() {
+    const dateFrom = document.getElementById('date-from').value;
+    const dateTo = document.getElementById('date-to').value;
+    
+    advancedFilters.dateFrom = dateFrom;
+    advancedFilters.dateTo = dateTo;
+}
+
+function applyAdvancedFilters() {
+    const url = new URL(window.location);
+    
+    // Aplicar filtros de fuentes
+    if (advancedFilters.sources.length > 0) {
+        url.searchParams.delete('sources');
+        advancedFilters.sources.forEach(source => {
+            url.searchParams.append('sources', source);
+        });
+    } else {
+        url.searchParams.delete('sources');
+    }
+    
+    // Aplicar filtros de fecha
+    if (advancedFilters.dateRange && advancedFilters.dateRange !== 'custom') {
+        url.searchParams.set('date_range', advancedFilters.dateRange);
+        url.searchParams.delete('date_from');
+        url.searchParams.delete('date_to');
+    } else if (advancedFilters.dateFrom || advancedFilters.dateTo) {
+        url.searchParams.delete('date_range');
+        if (advancedFilters.dateFrom) {
+            url.searchParams.set('date_from', advancedFilters.dateFrom);
+        }
+        if (advancedFilters.dateTo) {
+            url.searchParams.set('date_to', advancedFilters.dateTo);
+        }
+    } else {
+        url.searchParams.delete('date_range');
+        url.searchParams.delete('date_from');
+        url.searchParams.delete('date_to');
+    }
+    
+    // Mantener la página actual si existe
+    const currentPage = url.searchParams.get('page');
+    if (currentPage) {
+        url.searchParams.set('page', currentPage);
+    }
+    
+    window.location.href = url.toString();
+}
+
+function clearAdvancedFilters() {
+    // Limpiar checkboxes
+    const checkboxes = document.querySelectorAll('#advanced-filters-panel input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // Limpiar select de fechas
+    const dateSelect = document.getElementById('date-range-select');
+    dateSelect.value = '';
+    
+    // Ocultar inputs personalizados
+    const customInputs = document.getElementById('custom-date-inputs');
+    customInputs.classList.add('hidden');
+    
+    // Limpiar variables
+    advancedFilters = {
+        sources: [],
+        dateRange: '',
+        dateFrom: '',
+        dateTo: ''
+    };
+    
+    // Aplicar limpieza
+    applyAdvancedFilters();
+}
+
+// Inicializar el estado de los filtros cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    initializeFilterState();
+    // Aplicar i18n de textos del filter bar usando el diccionario global si existe
+    if (typeof t === 'function') {
+        const map = [
+            ['i18n-filters','filters'],
+            ['i18n-refresh','refresh'],
+            ['i18n-sources-label','sources_label'],
+            ['i18n-period','period'],
+            ['i18n-all-periods','all_periods'],
+            ['i18n-today','today'],
+            ['i18n-yesterday','yesterday'],
+            ['i18n-this-week','this_week'],
+            ['i18n-custom-range','custom_range'],
+            ['i18n-from','from'],
+            ['i18n-to','to'],
+            ['i18n-apply-filters','apply_filters'],
+            ['i18n-clear-filters','clear_filters'],
+            ['i18n-results-for','results_for'],
+            ['i18n-clear-search','clear_search']
+        ];
+        map.forEach(([id,key]) => { const el = document.getElementById(id); if (el) el.textContent = t(key); });
+        // También traducir las opciones ocultas del select nativo
+        const optMap = [
+            ['i18n-all-periods-opt','all_periods'],
+            ['i18n-today-opt','today'],
+            ['i18n-yesterday-opt','yesterday'],
+            ['i18n-this-week-opt','this_week'],
+            ['i18n-custom-range-opt','custom_range']
+        ];
+        optMap.forEach(([id,key]) => { const el = document.getElementById(id); if (el) el.textContent = t(key); });
+        const langLabel = document.querySelector('label[for="language-select"]');
+        if (langLabel) langLabel.textContent = t('language') + ':';
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) searchInput.placeholder = t('search_placeholder');
+    }
+});
+</script>
+{{end}}

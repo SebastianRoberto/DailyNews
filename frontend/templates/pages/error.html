@@ -1,0 +1,81 @@
+{{define "content"}}
+<div class="min-h-[60vh] flex items-center justify-center">
+    <div class="text-center space-y-6 max-w-md mx-auto px-4">
+        <!-- Icono de error -->
+        <div class="flex justify-center">
+            <svg class="w-24 h-24 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.291-1.002-5.824-2.696M15 9a9 9 0 11-6 0"></path>
+            </svg>
+        </div>
+        
+        <!-- Título del error -->
+        <h1 class="text-3xl font-bold text-gray-900">
+            {{if .Title}}{{.Title}}{{else}}Página no encontrada{{end}}
+        </h1>
+        
+        <!-- Descripción del error -->
+        <p class="text-gray-600 text-lg">
+            {{if .Description}}{{.Description}}{{else}}Lo sentimos, la página que buscas no existe o ha sido movida.{{end}}
+        </p>
+        
+        <!-- Acciones -->
+        <div class="space-y-4">
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="/" class="btn btn-primary">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Ir al Inicio
+                </a>
+                
+                <button onclick="window.history.back()" class="btn btn-secondary">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Volver Atrás
+                </button>
+            </div>
+            
+            <!-- Búsqueda rápida -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <p class="text-sm text-gray-500 mb-3">¿Buscas algo específico?</p>
+                <div class="relative max-w-sm mx-auto">
+                    <input 
+                        type="text" 
+                        placeholder="Buscar noticias..."
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        onkeypress="if(event.key==='Enter') window.location.href='/buscar?q=' + encodeURIComponent(this.value)"
+                    >
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enlaces útiles -->
+        <div class="pt-6 border-t border-gray-200">
+            <p class="text-sm text-gray-500 mb-3">Explora por categorías:</p>
+            <div class="flex flex-wrap justify-center gap-2">
+                <a href="/categoria/technology" class="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors">
+                    💻 Tecnología
+                </a>
+                <a href="/categoria/sports" class="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors">
+                    ⚽ Deportes
+                </a>
+                <a href="/categoria/cultura" class="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors">
+                    🎭 Cultura
+                </a>
+                <a href="/categoria/economia" class="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors">
+                    💰 Economía
+                </a>
+                <a href="/categoria/destacado" class="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors">
+                    ⭐ Último Momento
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

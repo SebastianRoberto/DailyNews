@@ -1,0 +1,724 @@
+@import "tailwindcss";
+
+/* ========================================
+   DAILYNEWS - ESTILOS PRINCIPALES
+   NO-SPA Frontend con Vue 3 + Tailwind v4
+======================================== */
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply antialiased bg-gray-50 text-gray-900;
+  }
+  
+  /* Enlaces */
+  a {
+    @apply transition-colors duration-200;
+  }
+  
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-gray-900;
+  }
+}
+
+@layer components {
+  /* ========================================
+     COMPONENTES DE TARJETAS DE NOTICIAS
+  ======================================== */
+  
+  .news-card {
+    @apply bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1;
+  }
+  
+  .news-card-image {
+    @apply relative w-full h-48 bg-gray-200;
+  }
+  
+  .news-card-img {
+    @apply absolute inset-0 w-full h-full object-cover;
+  }
+  
+  .news-card-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent;
+  }
+  
+  .news-card-badge {
+    @apply inline-block px-3 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full shadow-sm;
+  }
+  
+  .news-card-title {
+    @apply text-white font-semibold text-sm leading-tight mb-2;
+  }
+  
+  .news-card-meta {
+    @apply flex justify-between items-center text-gray-300 text-xs;
+  }
+  
+  .news-card-source {
+    @apply font-medium;
+  }
+  
+  .news-card-date {
+    @apply opacity-90;
+  }
+  
+  /* ========================================
+     FILTROS Y CONTROLES
+  ======================================== */
+  
+  .filter-bar {
+    @apply bg-white rounded-lg shadow-sm p-4 space-y-4 md:space-y-0 md:flex md:items-end md:space-x-4 border border-gray-200;
+  }
+  
+  .filter-group {
+    @apply flex-1;
+  }
+  
+  .filter-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+  
+  .filter-select {
+    @apply w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-1 transition-colors;
+  }
+  
+  .filter-input {
+    @apply w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-1 pl-10 transition-colors;
+  }
+  
+  .search-icon {
+    @apply absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none;
+  }
+  
+  /* ========================================
+     BOTONES
+  ======================================== */
+  
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+  
+  .btn-success {
+    @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+  }
+  
+  .btn-icon {
+    @apply p-2;
+  }
+  
+  /* ========================================
+     NAVEGACIÓN Y HEADER
+  ======================================== */
+  
+  .navbar {
+    @apply bg-white shadow-sm border-b border-gray-200;
+  }
+  
+  .navbar-brand {
+    @apply text-xl font-bold text-blue-600;
+  }
+  
+  .navbar-nav {
+    @apply hidden md:flex space-x-6;
+  }
+  
+  .navbar-link {
+    @apply text-gray-600 hover:text-blue-600 font-medium;
+  }
+  
+  .navbar-link.active {
+    @apply text-blue-600;
+  }
+  
+  /* ========================================
+     GRID Y LAYOUT
+  ======================================== */
+  
+  .news-grid {
+    @apply grid gap-6;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  
+  @media (min-width: 768px) {
+    .news-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .news-grid {
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+  }
+  
+  /* ========================================
+     PAGINACIÓN
+  ======================================== */
+  
+  .pagination {
+    @apply flex items-center justify-between mt-8;
+  }
+  
+  .pagination-info {
+    @apply text-sm text-gray-700;
+  }
+  
+  .pagination-nav {
+    @apply flex space-x-2;
+  }
+  
+  .pagination-btn {
+    @apply px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .pagination-btn.active {
+    @apply bg-blue-600 text-white border-blue-600 hover:bg-blue-700;
+  }
+  
+  /* ========================================
+     ESTADOS DE CARGA
+  ======================================== */
+  
+  .loading-spinner {
+    @apply inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600;
+  }
+  
+  .loading-overlay {
+    @apply fixed inset-0 bg-black/25 flex items-center justify-center z-50;
+  }
+  
+  .loading-content {
+    @apply bg-white rounded-lg p-6 shadow-lg text-center;
+  }
+  
+  /* ========================================
+     NOTIFICACIONES
+  ======================================== */
+  
+  .notification {
+    @apply fixed top-4 right-4 max-w-sm w-full bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50 transform transition-all duration-300;
+  }
+  
+  .notification.success {
+    @apply border-green-200 bg-green-50;
+  }
+  
+  .notification.error {
+    @apply border-red-200 bg-red-50;
+  }
+  
+  .notification.info {
+    @apply border-blue-200 bg-blue-50;
+  }
+  
+  .notification-title {
+    @apply font-medium text-gray-900 mb-1;
+  }
+  
+  .notification-message {
+    @apply text-sm text-gray-600;
+  }
+}
+
+@layer utilities {
+  /* ========================================
+     UTILIDADES PERSONALIZADAS
+  ======================================== */
+  
+  /* Aspect ratios */
+  .aspect-16-9 {
+    aspect-ratio: 16 / 9;
+  }
+  
+  .aspect-4-3 {
+    aspect-ratio: 4 / 3;
+  }
+  
+  /* Text truncation */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Animations */
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  /* Scroll bars */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ========================================
+   ANIMACIONES
+======================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+======================================== */
+
+@media (max-width: 640px) {
+  .news-card-image {
+    @apply h-40;
+  }
+  
+  .filter-bar {
+    @apply p-3 space-y-3;
+  }
+  
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .pagination {
+    @apply flex-col space-y-4;
+  }
+  
+  .pagination-nav {
+    @apply order-first;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-nav {
+    @apply hidden;
+  }
+}
+
+/* ========================================
+   DARK MODE SUPPORT - MEJORADO
+======================================== */
+
+.dark {
+    @apply bg-gray-950 text-gray-50;
+}
+
+.dark .bg-white {
+    @apply bg-gray-900;
+}
+
+.dark .bg-gray-50 {
+    @apply bg-gray-950;
+}
+
+.dark .bg-gray-100 {
+    @apply bg-gray-800;
+}
+
+.dark .bg-gray-200 {
+    @apply bg-gray-700;
+}
+
+.dark .text-gray-900 {
+    @apply text-gray-50;
+}
+
+.dark .text-gray-800 {
+    @apply text-gray-100;
+}
+
+.dark .text-gray-700 {
+    @apply text-gray-200;
+}
+
+.dark .text-gray-600 {
+    @apply text-gray-300;
+}
+
+.dark .text-gray-500 {
+    @apply text-gray-400;
+}
+
+.dark .border-gray-200 {
+    @apply border-gray-700;
+}
+
+.dark .border-gray-300 {
+    @apply border-gray-600;
+}
+
+.dark .shadow-md {
+    @apply shadow-black/30;
+}
+
+.dark .shadow-lg {
+    @apply shadow-black/40;
+}
+
+/* Header y navegación */
+.dark .navbar {
+    @apply bg-gray-900 border-gray-700;
+}
+
+.dark .navbar-brand {
+    @apply text-blue-400;
+}
+
+.dark .navbar-link {
+    @apply text-gray-300 hover:text-blue-400;
+}
+
+.dark .navbar-link.active {
+    @apply text-blue-400;
+}
+
+/* Header específico */
+.dark header {
+    @apply bg-gray-900 border-gray-700;
+}
+
+.dark header h1 {
+    @apply text-gray-50;
+}
+
+.dark header p {
+    @apply text-gray-300;
+}
+
+.dark header .nav-link {
+    @apply text-gray-300 hover:text-blue-400;
+}
+
+.dark header .nav-link.active {
+    @apply text-blue-400;
+}
+
+/* Texto de búsqueda */
+.dark .search-label {
+    @apply text-gray-300;
+}
+
+.dark .search-placeholder {
+    @apply text-gray-400;
+}
+
+.dark .search-input {
+    @apply bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400;
+}
+
+.dark .search-input:focus {
+    @apply border-blue-500 ring-blue-500;
+}
+
+/* FilterBar específico */
+.dark .filter-bar {
+    @apply bg-gray-900 border-gray-700;
+}
+
+.dark .filter-bar label {
+    @apply text-gray-300;
+}
+
+.dark .filter-bar span {
+    @apply text-gray-300;
+}
+
+.dark .filter-bar p {
+    @apply text-gray-300;
+}
+
+.dark .filter-bar p span {
+    @apply text-gray-50;
+}
+
+/* Cards de noticias */
+.dark .news-card {
+    @apply bg-gray-900 border-gray-700 hover:shadow-black/50;
+}
+
+.dark .news-content {
+    @apply bg-gray-900;
+}
+
+.dark .news-title a {
+    @apply text-gray-50 hover:text-blue-400;
+}
+
+.dark .news-meta {
+    @apply text-gray-400;
+}
+
+.dark .news-source {
+    @apply text-gray-400;
+}
+
+.dark .news-date {
+    @apply text-gray-400;
+}
+
+.dark .news-placeholder {
+    @apply bg-gray-800;
+}
+
+.dark .news-placeholder svg {
+    @apply text-gray-500;
+}
+
+/* Filtros */
+.dark .filter-input,
+.dark .filter-select {
+    @apply bg-gray-700 border-gray-600 text-gray-100;
+}
+
+.dark .filter-input:focus,
+.dark .filter-select:focus {
+    @apply border-blue-500 ring-blue-500;
+}
+
+/* Botones */
+.dark .btn-secondary {
+    @apply bg-gray-700 text-gray-100 hover:bg-gray-600 border-gray-600;
+}
+
+.dark .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700;
+}
+
+/* Paginación */
+.dark .pagination-btn {
+    @apply bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700 hover:text-gray-200;
+}
+
+.dark .pagination-btn.active {
+    @apply bg-blue-600 text-white border-blue-600;
+}
+
+.dark .pagination-info {
+    @apply text-gray-300;
+}
+
+/* Input de paginación específico */
+.dark input[type="number"] {
+    @apply bg-gray-700 border-gray-600 text-white;
+}
+
+.dark input[type="number"]:focus {
+    @apply border-blue-500 ring-blue-500;
+}
+
+.dark input[type="number"]::placeholder {
+    @apply text-gray-400;
+}
+
+/* Categorías */
+.dark .category-card {
+    @apply bg-gray-900 border-gray-700 hover:bg-gray-800;
+}
+
+.dark .category-card h3 {
+    @apply text-gray-50;
+}
+
+.dark .category-card p {
+    @apply text-gray-400;
+}
+
+/* Footer */
+.dark .footer {
+    @apply bg-gray-900 border-gray-700;
+}
+
+.dark .footer a {
+    @apply text-gray-300 hover:text-blue-400;
+}
+
+/* Loading y notificaciones */
+.dark .loading-content {
+    @apply bg-gray-900 border-gray-700;
+}
+
+.dark .notification {
+    @apply bg-gray-900 border-gray-700;
+}
+
+.dark .notification.success {
+    @apply border-green-700 bg-green-900/20;
+}
+
+.dark .notification.error {
+    @apply border-red-700 bg-red-900/20;
+}
+
+.dark .notification.info {
+    @apply border-blue-700 bg-blue-900/20;
+}
+
+/* Mobile menu */
+.dark .mobile-menu {
+    @apply bg-gray-900 border-gray-700;
+}
+
+.dark .mobile-nav-link {
+    @apply text-gray-300 hover:text-blue-400;
+}
+
+.dark .mobile-nav-link.active {
+    @apply text-blue-400;
+}
+
+/* Confirm modal overlay */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.confirm-modal {
+  background: #ffffff;
+  color: #111827;
+  width: 360px;
+  max-width: calc(100vw - 2rem);
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  padding: 1rem 1rem 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  transform: translateY(-8px);
+  animation: slideDown 0.22s ease-out;
+}
+
+.confirm-modal h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.confirm-modal p {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin: 0.25rem 0 0.75rem 0;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 0.5rem 0 0.25rem 0;
+}
+
+.confirm-btn {
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.confirm-btn-primary {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.confirm-btn-primary:hover { background: #1d4ed8; }
+
+.confirm-btn-secondary {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.confirm-btn-secondary:hover { background: #d1d5db; }
+
+/* Dark mode support */
+.dark .confirm-modal { background: #111827; color: #f9fafb; border-color: #374151; }
+.dark .confirm-modal p { color: #d1d5db; }
+.dark .confirm-btn-secondary { background: #374151; color: #f9fafb; border-color: #4b5563; }
+.dark .confirm-btn-secondary:hover { background: #4b5563; }
+
+@keyframes slideDown {
+  from { transform: translateY(-12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Tooltip para copiar enlace */
+.copy-tooltip {
+  position: fixed; /* relativo a la ventana, perfecto para centrar sobre el botón */
+  left: 0; /* se ajusta por JS */
+  top: 0;  /* se ajusta por JS */
+  transform: translate(-50%, -4px); /* centra en X respecto al punto calculado */
+  background: transparent;
+  color: #22c55e; /* green-500 agradable */
+  font-size: 0.56rem; 
+  font-weight: 600;
+  padding: 0;
+  border-radius: 0;
+  opacity: 0;
+  transition: opacity 220ms ease, transform 220ms ease; /* animación más suave */
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 9999;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35); /* legibilidad en fondos */
+}
+.copy-tooltip.show {
+  opacity: 1;
+  transform: translate(-50%, -8px);
+}

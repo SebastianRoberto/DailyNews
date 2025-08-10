@@ -1,0 +1,4 @@
+*.log
+logs/
+frontend/images/fallback/*
+config/config.yaml

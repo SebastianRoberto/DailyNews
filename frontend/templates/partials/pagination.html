@@ -1,0 +1,205 @@
+{{define "pagination"}}
+{{if .}}
+<div class="pagination" id="pagination-section">
+    <!-- Información de la paginación -->
+    <div class="pagination-info">
+        <p class="text-sm text-gray-700">
+            Mostrando página <span class="font-medium">{{.CurrentPage}}</span> de <span class="font-medium">{{.TotalPages}}</span>
+            {{if .TotalItems}}
+                (<span class="font-medium">{{.TotalItems}}</span> noticias total)
+            {{end}}
+        </p>
+    </div>
+    
+    <!-- Navegación de páginas -->
+    <nav class="pagination-nav" aria-label="Navegación de páginas">
+        <!-- Botón Anterior -->
+        <button 
+            type="button"
+            onclick="prevPage()"
+            {{if not .HasPrev}}disabled{{end}}
+            class="pagination-btn {{if not .HasPrev}}opacity-50 cursor-not-allowed{{end}}"
+            aria-label="Página anterior"
+        >
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Anterior
+        </button>
+        
+        <!-- Números de página -->
+        {{$currentPage := .CurrentPage}}
+        {{$totalPages := .TotalPages}}
+        
+        <!-- Primera página -->
+        {{if gt $currentPage 3}}
+            <button 
+                type="button"
+                onclick="goToPage(1)"
+                class="pagination-btn"
+                aria-label="Ir a página 1"
+            >
+                1
+            </button>
+            
+            {{if gt $currentPage 4}}
+                <span class="px-2 py-2 text-sm text-gray-500">...</span>
+            {{end}}
+        {{end}}
+        
+        <!-- Páginas alrededor de la actual -->
+        {{range $i := .PageRange}}
+            <button 
+                type="button"
+                onclick="goToPage({{$i}})"
+                class="pagination-btn {{if eq $i $currentPage}}active{{end}}"
+                aria-label="Ir a página {{$i}}"
+                {{if eq $i $currentPage}}aria-current="page"{{end}}
+            >
+                {{$i}}
+            </button>
+        {{end}}
+        
+        <!-- Última página -->
+        {{if and (gt $totalPages 5) (lt $currentPage $totalPages)}}
+            {{if lt $currentPage $totalPages}}
+                <span class="px-2 py-2 text-sm text-gray-500">...</span>
+            {{end}}
+            
+            <button 
+                type="button"
+                onclick="goToPage({{$totalPages}})"
+                class="pagination-btn"
+                aria-label="Ir a página {{$totalPages}}"
+            >
+                {{$totalPages}}
+            </button>
+        {{end}}
+        
+        <!-- Botón Siguiente -->
+        <button 
+            type="button"
+            onclick="nextPage()"
+            {{if not .HasNext}}disabled{{end}}
+            class="pagination-btn {{if not .HasNext}}opacity-50 cursor-not-allowed{{end}}"
+            aria-label="Página siguiente"
+        >
+            Siguiente
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+    </nav>
+    
+    <!-- Salto rápido a página -->
+    <div class="hidden md:flex items-center space-x-2 text-sm">
+        <label for="page-jump" class="text-gray-600">Ir a página:</label>
+        <input 
+            type="number" 
+            id="page-jump-input"
+            min="1" 
+            max="{{.TotalPages}}" 
+            value="{{.CurrentPage}}"
+            class="w-16 px-2 py-1 text-center border border-gray-300 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+            onkeypress="onPageJumpKeypress(event)"
+            aria-label="Número de página"
+        >
+        <button 
+            type="button"
+            onclick="jumpToPage()"
+            class="btn btn-secondary text-xs px-2 py-1"
+        >
+            Ir
+        </button>
+    </div>
+</div>
+
+<!-- Script para funcionalidad de paginación -->
+<script>
+// Variables globales para paginación - usando data attributes para evitar problemas de sintaxis
+(function() {
+    const paginationElement = document.getElementById('pagination-section');
+    if (!paginationElement) return;
+    
+    // Obtener datos desde data attributes
+    const currentPage = parseInt(paginationElement.getAttribute('data-current-page') || '1');
+    const totalPages = parseInt(paginationElement.getAttribute('data-total-pages') || '1');
+    const hasPrev = paginationElement.getAttribute('data-has-prev') === 'true';
+    const hasNext = paginationElement.getAttribute('data-has-next') === 'true';
+    
+    // Funciones de paginación
+    window.prevPage = function() {
+        if (hasPrev) {
+            const prevPage = currentPage - 1;
+            const url = new URL(window.location);
+            // Conservar todos los parámetros existentes y solo cambiar la página
+            url.searchParams.set('page', prevPage.toString());
+            window.location.href = url.toString();
+        }
+    };
+    
+    window.nextPage = function() {
+        if (hasNext) {
+            const nextPage = currentPage + 1;
+            const url = new URL(window.location);
+            // Conservar todos los parámetros existentes y solo cambiar la página
+            url.searchParams.set('page', nextPage.toString());
+            window.location.href = url.toString();
+        }
+    };
+    
+    window.goToPage = function(page) {
+        if (page >= 1 && page <= totalPages) {
+            const url = new URL(window.location);
+            // Conservar todos los parámetros existentes y solo cambiar la página
+            url.searchParams.set('page', page.toString());
+            window.location.href = url.toString();
+        }
+    };
+    
+    window.jumpToPage = function() {
+        const input = document.getElementById('page-jump-input');
+        const page = parseInt(input.value);
+        
+        // Primero validar si la página existe
+        if (page < 1 || page > totalPages) {
+            console.log('❌ Página inválida:', page, '(máximo:', totalPages, ')');
+            alert(`La página ${page} no existe. Máximo: ${totalPages}`);
+            input.value = currentPage;
+            return;
+        }
+        
+        // Si es la página actual, no hacer nada
+        if (page === currentPage) {
+            return;
+        }
+        
+        // Si la página es válida y diferente, navegar conservando filtros
+        const url = new URL(window.location);
+        url.searchParams.set('page', page.toString());
+        window.location.href = url.toString();
+    };
+    
+    window.onPageJumpKeypress = function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            jumpToPage();
+        }
+    };
+})();
+</script>
+
+<!-- Data attributes para pasar datos de forma segura -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paginationElement = document.getElementById('pagination-section');
+    if (paginationElement) {
+        paginationElement.setAttribute('data-current-page', '{{.CurrentPage}}');
+        paginationElement.setAttribute('data-total-pages', '{{.TotalPages}}');
+        paginationElement.setAttribute('data-has-prev', '{{.HasPrev}}');
+        paginationElement.setAttribute('data-has-next', '{{.HasNext}}');
+    }
+});
+</script>
+{{end}}
+{{end}}
