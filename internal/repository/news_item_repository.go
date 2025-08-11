@@ -375,6 +375,9 @@ func (r *newsItemRepository) GetFilteredNews(ctx context.Context, filters domain
 	if filters.Search != "" {
 		dbQuery = dbQuery.Where("title LIKE ?", "%"+filters.Search+"%")
 	}
+	if len(filters.ExcludeCategories) > 0 {
+		dbQuery = dbQuery.Where("category_code NOT IN ?", filters.ExcludeCategories)
+	}
 
 	var items []domain.NewsItem
 	err := dbQuery.
@@ -418,6 +421,9 @@ func (r *newsItemRepository) CountFilteredNews(ctx context.Context, filters doma
 	}
 	if filters.Search != "" {
 		dbQuery = dbQuery.Where("title LIKE ?", "%"+filters.Search+"%")
+	}
+	if len(filters.ExcludeCategories) > 0 {
+		dbQuery = dbQuery.Where("category_code NOT IN ?", filters.ExcludeCategories)
 	}
 
 	var count int64

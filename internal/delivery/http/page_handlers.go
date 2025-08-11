@@ -936,12 +936,24 @@ func (h *Handler) getFilteredNews(ctx context.Context, lang, category, search st
 		Sources:  sources,
 	}
 
+	if category == "" {
+		// Excluir categoría "breaking" de la página principal
+		filters.ExcludeCategories = []string{"breaking"}
+	}
+
 	// Procesar filtros de fecha
 	if dateRange != "" {
 		// Usar rangos predefinidos
 		start, end := utils.GetDateRange(dateRange)
 		filters.DateFrom = &start
 		filters.DateTo = &end
+
+		// Log para debugging
+		utils.AppInfo("FILTER_DATE", "Filtro de fecha aplicado", map[string]interface{}{
+			"date_range": dateRange,
+			"date_from":  start.Format("2006-01-02 15:04:05"),
+			"date_to":    end.Format("2006-01-02 15:04:05"),
+		})
 	} else if dateFrom != "" || dateTo != "" {
 		// Usar fechas personalizadas
 		if dateFrom != "" {
@@ -956,6 +968,12 @@ func (h *Handler) getFilteredNews(ctx context.Context, lang, category, search st
 				filters.DateTo = &date
 			}
 		}
+
+		// Log para debugging
+		utils.AppInfo("FILTER_DATE", "Filtro de fecha personalizada aplicado", map[string]interface{}{
+			"date_from": dateFrom,
+			"date_to":   dateTo,
+		})
 	}
 
 	// Obtener noticias filtradas usando el nuevo método

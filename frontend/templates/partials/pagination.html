@@ -14,13 +14,13 @@
     <!-- Navegación de páginas -->
     <nav class="pagination-nav" aria-label="Navegación de páginas">
         <!-- Botón Anterior -->
-        <button 
-            type="button"
-            onclick="prevPage()"
-            {{if not .HasPrev}}disabled{{end}}
-            class="pagination-btn {{if not .HasPrev}}opacity-50 cursor-not-allowed{{end}}"
-            aria-label="Página anterior"
-        >
+                        <button 
+                    type="button"
+                    onclick="navigateToPageWithParams({{.PrevPage}})"
+                    {{if not .HasPrev}}disabled{{end}}
+                    class="pagination-btn {{if not .HasPrev}}opacity-50 cursor-not-allowed{{end}}"
+                    aria-label="Página anterior"
+                >
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
@@ -51,7 +51,7 @@
         {{range $i := .PageRange}}
             <button 
                 type="button"
-                onclick="goToPage({{$i}})"
+                onclick="navigateToPageWithParams({{$i}})"
                 class="pagination-btn {{if eq $i $currentPage}}active{{end}}"
                 aria-label="Ir a página {{$i}}"
                 {{if eq $i $currentPage}}aria-current="page"{{end}}
@@ -68,7 +68,7 @@
             
             <button 
                 type="button"
-                onclick="goToPage({{$totalPages}})"
+                onclick="navigateToPageWithParams({{$totalPages}})"
                 class="pagination-btn"
                 aria-label="Ir a página {{$totalPages}}"
             >
@@ -77,13 +77,13 @@
         {{end}}
         
         <!-- Botón Siguiente -->
-        <button 
-            type="button"
-            onclick="nextPage()"
-            {{if not .HasNext}}disabled{{end}}
-            class="pagination-btn {{if not .HasNext}}opacity-50 cursor-not-allowed{{end}}"
-            aria-label="Página siguiente"
-        >
+                        <button 
+                    type="button"
+                    onclick="navigateToPageWithParams({{.NextPage}})"
+                    {{if not .HasNext}}disabled{{end}}
+                    class="pagination-btn {{if not .HasNext}}opacity-50 cursor-not-allowed{{end}}"
+                    aria-label="Página siguiente"
+                >
             Siguiente
             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -106,7 +106,7 @@
         >
         <button 
             type="button"
-            onclick="jumpToPage()"
+            onclick="navigateToPageWithParams(document.getElementById('page-jump-input').value)"
             class="btn btn-secondary text-xs px-2 py-1"
         >
             Ir
@@ -116,81 +116,24 @@
 
 <!-- Script para funcionalidad de paginación -->
 <script>
-// Variables globales para paginación - usando data attributes para evitar problemas de sintaxis
-(function() {
-    const paginationElement = document.getElementById('pagination-section');
-    if (!paginationElement) return;
+// Función para navegar a una página preservando TODOS los parámetros (como navigateWithLang)
+function navigateToPageWithParams(page) {
+    console.log('🚀 navigateToPageWithParams() ejecutada con página:', page);
     
-    // Obtener datos desde data attributes
-    const currentPage = parseInt(paginationElement.getAttribute('data-current-page') || '1');
-    const totalPages = parseInt(paginationElement.getAttribute('data-total-pages') || '1');
-    const hasPrev = paginationElement.getAttribute('data-has-prev') === 'true';
-    const hasNext = paginationElement.getAttribute('data-has-next') === 'true';
+    // Obtener todos los parámetros actuales
+    const currentParams = new URLSearchParams(window.location.search);
     
-    // Funciones de paginación
-    window.prevPage = function() {
-        if (hasPrev) {
-            const prevPage = currentPage - 1;
-            const url = new URL(window.location);
-            // Conservar todos los parámetros existentes y solo cambiar la página
-            url.searchParams.set('page', prevPage.toString());
-            window.location.href = url.toString();
-        }
-    };
+    // Actualizar solo el parámetro de página
+    currentParams.set('page', page.toString());
     
-    window.nextPage = function() {
-        if (hasNext) {
-            const nextPage = currentPage + 1;
-            const url = new URL(window.location);
-            // Conservar todos los parámetros existentes y solo cambiar la página
-            url.searchParams.set('page', nextPage.toString());
-            window.location.href = url.toString();
-        }
-    };
+    // Construir la nueva URL preservando TODOS los parámetros
+    const newUrl = window.location.pathname + '?' + currentParams.toString();
     
-    window.goToPage = function(page) {
-        if (page >= 1 && page <= totalPages) {
-            const url = new URL(window.location);
-            // Conservar todos los parámetros existentes y solo cambiar la página
-            url.searchParams.set('page', page.toString());
-            window.location.href = url.toString();
-        }
-    };
-    
-    window.jumpToPage = function() {
-        const input = document.getElementById('page-jump-input');
-        const page = parseInt(input.value);
-        
-        // Primero validar si la página existe
-        if (page < 1 || page > totalPages) {
-            console.log('❌ Página inválida:', page, '(máximo:', totalPages, ')');
-            alert(`La página ${page} no existe. Máximo: ${totalPages}`);
-            input.value = currentPage;
-            return;
-        }
-        
-        // Si es la página actual, no hacer nada
-        if (page === currentPage) {
-            return;
-        }
-        
-        // Si la página es válida y diferente, navegar conservando filtros
-        const url = new URL(window.location);
-        url.searchParams.set('page', page.toString());
-        window.location.href = url.toString();
-    };
-    
-    window.onPageJumpKeypress = function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            jumpToPage();
-        }
-    };
-})();
-</script>
+    console.log('URL final:', newUrl);
+    window.location.href = newUrl;
+}
 
-<!-- Data attributes para pasar datos de forma segura -->
-<script>
+// Configurar data attributes cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     const paginationElement = document.getElementById('pagination-section');
     if (paginationElement) {

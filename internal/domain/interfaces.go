@@ -100,10 +100,11 @@ type UnitOfWork interface {
 
 // NewsFilters define los filtros avanzados para noticias
 type NewsFilters struct {
-	Lang     string     `json:"lang"`
-	Category string     `json:"category"`
-	Sources  []string   `json:"sources"`   // Múltiples fuentes
-	DateFrom *time.Time `json:"date_from"` // Fecha desde
-	DateTo   *time.Time `json:"date_to"`   // Fecha hasta
-	Search   string     `json:"search"`    // Búsqueda en título
+	Lang              string     `json:"lang"`
+	Category          string     `json:"category"`
+	Sources           []string   `json:"sources"`            // Múltiples fuentes
+	ExcludeCategories []string   `json:"exclude_categories"` // Categorías a excluir
+	DateFrom          *time.Time `json:"date_from"`          // Fecha desde
+	DateTo            *time.Time `json:"date_to"`            // Fecha hasta
+	Search            string     `json:"search"`             // Búsqueda en título
 }

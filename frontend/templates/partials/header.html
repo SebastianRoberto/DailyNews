@@ -350,6 +350,14 @@ const I18N = {
     ,update_error: 'Error de actualización'
     ,update_error_msg: 'Error al actualizar'
     ,delete_source: 'Eliminar fuente'
+    ,category_technology: 'Tecnología'
+    ,category_sports: 'Deportes'
+    ,category_entertainment: 'Entretenimiento'
+    ,category_economy: 'Economía'
+    ,category_health: 'Salud'
+    ,category_international: 'Internacional'
+    ,category_culture: 'Cultura'
+    ,category_breaking: 'Destacado'
   },
   en: {
     config: 'Settings',
@@ -455,6 +463,14 @@ const I18N = {
     ,update_error: 'Update error'
     ,update_error_msg: 'Error updating'
     ,delete_source: 'Delete source'
+    ,category_technology: 'Technology'
+    ,category_sports: 'Sports'
+    ,category_entertainment: 'Entertainment'
+    ,category_economy: 'Economy'
+    ,category_health: 'Health'
+    ,category_international: 'International'
+    ,category_culture: 'Culture'
+    ,category_breaking: 'Breaking News'
   },
   fr: {
     config: 'Configuration',
@@ -560,6 +576,14 @@ const I18N = {
     ,update_error: 'Erreur de mise à jour'
     ,update_error_msg: 'Erreur lors de la mise à jour'
     ,delete_source: 'Supprimer la source'
+    ,category_technology: 'Technologie'
+    ,category_sports: 'Sports'
+    ,category_entertainment: 'Divertissement'
+    ,category_economy: 'Économie'
+    ,category_health: 'Santé'
+    ,category_international: 'International'
+    ,category_culture: 'Culture'
+    ,category_breaking: 'À la une'
   }
 };
 
@@ -657,7 +681,7 @@ function applyI18n() {
   const langPh = document.getElementById('i18n-language-filter-ph');
   if (langPh) langPh.textContent = t('language_ph');
 
-  // ===== Footer i18n =====
+  updateCategoryOptions();
   const footerTagline = document.getElementById('footer-tagline');
   if (footerTagline) footerTagline.textContent = t('footer_tagline');
   const footerCatTitle = document.getElementById('footer-categories-title');
@@ -1031,44 +1055,30 @@ async function loadUserSources() {
                             <div id="confirm-buttons-${source.id}" class="flex gap-1 opacity-0 pointer-events-none transition-all duration-200">
                                 <button 
                                     onclick="confirmChanges(${source.id})"
-                                    class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-all duration-150 relative group"
-                                    data-tooltip="${t('confirm_changes')}"
+                                    class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-all duration-150"
                                 >
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
-                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 text-xs font-medium text-white bg-green-600 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                                        ${t('confirm_changes')}
-                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-green-600"></div>
-                                    </div>
                                 </button>
                                 <button 
                                     onclick="cancelChanges(${source.id})"
-                                    class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 transition-all duration-150 relative group"
-                                    data-tooltip="${t('cancel_changes')}"
+                                    class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 transition-all duration-150"
                                 >
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
-                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 text-xs font-medium text-white bg-gray-600 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                                        ${t('cancel_changes')}
-                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-600"></div>
-                                    </div>
                                 </button>
                             </div>
                             
                             <!-- Botón de eliminar -->
                             <button 
                                 onclick="deleteSource(${source.id})"
-                                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 relative group"
+                                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                             >
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
-                                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 text-xs font-medium text-white bg-red-600 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                                    ${t('delete_source')}
-                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-red-600"></div>
-                                </div>
                             </button>
                         </div>
                     </div>
@@ -1471,8 +1481,47 @@ function restoreConfigState() {
   }
 }
 
+// Función para actualizar las opciones de categorías en los dropdowns
+function updateCategoryOptions() {
+  const categorySelects = document.querySelectorAll('select[name="category"]');
+  const categoryFilterSelects = document.querySelectorAll('#category-filter');
+  
+  const categoryMappings = [
+    { value: 'technology', key: 'category_technology' },
+    { value: 'sports', key: 'category_sports' },
+    { value: 'entertainment', key: 'category_entertainment' },
+    { value: 'economy', key: 'category_economy' },
+    { value: 'health', key: 'category_health' },
+    { value: 'international', key: 'category_international' },
+    { value: 'culture', key: 'category_culture' },
+    { value: 'breaking', key: 'category_breaking' }
+  ];
+  
+  // Actualizar todos los selects de categorías
+  [...categorySelects, ...categoryFilterSelects].forEach(select => {
+    if (!select) return;
+    
+    // Guardar el valor seleccionado actual
+    const currentValue = select.value;
+    
+    // Actualizar las opciones
+    categoryMappings.forEach(mapping => {
+      const option = select.querySelector(`option[value="${mapping.value}"]`);
+      if (option) {
+        option.textContent = t(mapping.key);
+      }
+    });
+    
+    // Restaurar el valor seleccionado
+    select.value = currentValue;
+  });
+}
+
 // Ejecutar al cargar la página
-document.addEventListener('DOMContentLoaded', restoreConfigState);
+document.addEventListener('DOMContentLoaded', () => {
+  restoreConfigState();
+  updateCategoryOptions();
+});
 
 // Subir nueva imagen de fallback para una fuente
 async function uploadSourceFallbackImage(sourceId, fileInput) {
@@ -1804,7 +1853,6 @@ function confirmModal(title = 'Confirmación', message = '¿Seguro?', confirmTex
 </header>
 
 <script>
-// Función para navegar preservando el idioma seleccionado
 function navigateWithLang(event, url) {
     event.preventDefault();
     const currentLang = new URLSearchParams(window.location.search).get('lang');
