@@ -109,7 +109,7 @@
                             <option id="i18n-all-periods-opt" value="">Todos los períodos</option>
                             <option id="i18n-today-opt" value="today">Hoy</option>
                             <option id="i18n-yesterday-opt" value="yesterday">Ayer</option>
-                            <option id="i18n-this-week-opt" value="this_week">Esta semana</option>
+
                             <option id="i18n-custom-range-opt" value="custom">Rango personalizado</option>
                         </select>
                         
@@ -156,13 +156,7 @@
                                     >
                                         <span id="i18n-yesterday">Ayer</span>
                                     </button>
-                                    <button 
-                                        type="button"
-                                        class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 transition-colors duration-150"
-                                        onclick="selectDateRange('this_week', document.getElementById('i18n-this-week').textContent)"
-                                    >
-                                        <span id="i18n-this-week">Esta semana</span>
-                                    </button>
+
                                     <button 
                                         type="button"
                                         class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-600 transition-colors duration-150"
@@ -890,12 +884,18 @@ document.addEventListener('DOMContentLoaded', function() {
             ['i18n-clear-search','clear_search']
         ];
         map.forEach(([id,key]) => { const el = document.getElementById(id); if (el) el.textContent = t(key); });
+        
+        // Traducir el texto predeterminado del botón de período
+        const dateRangeDisplay = document.getElementById('date-range-display');
+        if (dateRangeDisplay && !dateRangeDisplay.textContent.includes('Today') && !dateRangeDisplay.textContent.includes('Ayer')) {
+            dateRangeDisplay.textContent = t('all_periods');
+        }
+        
         // También traducir las opciones ocultas del select nativo
         const optMap = [
             ['i18n-all-periods-opt','all_periods'],
             ['i18n-today-opt','today'],
             ['i18n-yesterday-opt','yesterday'],
-            ['i18n-this-week-opt','this_week'],
             ['i18n-custom-range-opt','custom_range']
         ];
         optMap.forEach(([id,key]) => { const el = document.getElementById(id); if (el) el.textContent = t(key); });
