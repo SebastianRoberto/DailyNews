@@ -173,9 +173,6 @@ CONFIG_PATH=./config/config.yaml  # Ruta del archivo de configuración
 <a id="english"></a>
 ## 🇺🇸 English
 
-
-PD: Todas las rutas para la gestión de imagenes y dependencias estan optimizadas para ser compatibles y no dar problemas ni con Windows ni con Linux, si tienes algun problema o hay algo que creas que se pueda/deba mejorar puedes escribirme a mi correo:
-sebastian.roberto.pp@gmail.com
 ### 📖 Description
 
 **DailyNews** is a modern web application that aggregates news from multiple RSS sources (some are included by default and users can add their own) and organizes them by category and language. Built with **Clean Architecture** and **Domain-Driven Design (DDD)**, it provides an elegant, responsive interface to keep up with unbiased news without pre-set patterns.
@@ -311,4 +308,8 @@ CONFIG_PATH=./config/config.yaml  # Configuration file path
 - Detailed info associated with fallback_images (in the future we may enforce upload limits or auto-convert to WebP for faster load times).
 
 ---
+
+---
+
+**PD:** Todas las rutas para la gestión de imágenes y dependencias están optimizadas para ser compatibles y no dar problemas ni con Windows ni con Linux. Si tienes algún problema o hay algo que creas que se pueda/deba mejorar puedes escribirme a mi correo: sebastian.roberto.pp@gmail.com
 
